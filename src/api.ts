@@ -682,7 +682,7 @@ function delelastline(filename: any) {
 
 async function savecsvfile(){
   // const users = await db.get("user").fliter(o=>o.fishnumber>0).sortBy("fishnumber").value()
-  const users = await db.get("user").sortBy("fishnumber").value()
+  const users = await db.get("user").sort((m,n)=>{return n.fishnumber-m.fishnumber}).filter(o=>o.fishnumber).value()
   console.log(users)
   // 细节坑 必须加个前缀\ufeff表示 这是一个表头，就可以在excel中正常显示中文了
   let csvdata  =  '\ufeff用户名,ID,鱼头数,积分\n'
