@@ -255,7 +255,8 @@ export default class DanMu extends Vue {
                       id,
                       username: arg.nn, 
                       score: 0,
-                      lastsign:''
+                      lastsign:'',
+                      fishnumber:0
                   })
                   const check = await this.$http.post('/check',{id})
                   
@@ -275,7 +276,8 @@ export default class DanMu extends Vue {
                       id,
                       username: arg.nn, 
                       score: 0,
-                      lastsign:''
+                      lastsign:'',
+                      fishnumber:0
                   })
                   const sign = await this.$http.post('/sign',{
                     id,

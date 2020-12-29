@@ -16,6 +16,7 @@ const debugpath = isDevelopment ? __dirname :process.cwd()
 const obspath = path.join(debugpath, "/obstemplate");
 const datapath = path.join(debugpath, "/data");
 
+const fishfile = path.join(datapath,"/鱼头记录.csv")
 const helpfile = path.join(obspath, "/帮助.txt");
 const signfile = path.join(obspath, "/签到.txt");
 const giftfile = path.join(obspath, "/礼物.txt");
@@ -278,7 +279,7 @@ server.post("/check", async (req, res) => {
     .get("user")
     .find({ id })
     .value();
-  const filedata = `[积分查询] ${user.username}当前总积分${user.score}`;
+  const filedata = `[查询] ${user.username}\n当前总积分${user.score}\n当前鱼头${user.fishnumber}`;
   fs.appendFileSync(signfile, filedata);
   setTimeout(() => {
     delelastline(signfile);
@@ -430,17 +431,29 @@ server.post("/stage/catch", async (req, res) => {
 
 server.post("/stage/release/:stageindex", async (req, res) => {
   const stagename  = 'stage' + req.params.stageindex;
+  const fishstate = req.body.state
   const stage = await db.get(stagename).value();
   const { state, userid } = stage;
   if (state == "catching") {
     await change2onstage({ id: userid, stagename });
     res.send({success:true});
   } else if (state == "catchingthen2idle") {
+    // 抓到鱼了
+    if(fishstate){
+      const  fishnumber = db.get("user").find({id:userid}).value() + 1
+      await db
+      .get("user")
+      .find({id:userid})
+      .assign({fishnumber})
+      .write();
+    }
     await db
       .get(stagename)
       .assign({ state: "idle" })
       .write();
-    await initfile(stagename);
+      await savecsvfile()    
+      await initfile(stagename);
+
     res.send({success:true});
   }else{
     res.send({error:'unknow state'});
@@ -667,7 +680,25 @@ function delelastline(filename: any) {
   }
 }
 
+async function savecsvfile(){
+  // const users = await db.get("user").fliter(o=>o.fishnumber>0).sortBy("fishnumber").value()
+  const users = await db.get("user").sortBy("fishnumber").value()
+  console.log(users)
+  // 细节坑 必须加个前缀\ufeff表示 这是一个表头，就可以在excel中正常显示中文了
+  let csvdata  =  '\ufeff用户名,ID,鱼头数,积分\n'
+  // 存在鱼头数大于0的用户
+  if(users){
+    for(let index in users){
+      const user  = users[index]
+      const {id, username,score,fishnumber} =   user
+      const datastring = `${username},${id},${fishnumber},${score}\n`
+      csvdata += datastring
+    }
 
+    fs.writeFileSync(fishfile,csvdata,{encoding:'utf-8'})
+  }
+  
+}
 
 
 async function talktohw(type:string,stagename?:string){
@@ -719,6 +750,7 @@ async function init(){
   await initfile('stage2')
   await initfile('stage3')
   await initfile('stage4')
+  await savecsvfile()
 }
 
 
