@@ -434,19 +434,34 @@ server.post("/stage/release/:stageindex", async (req, res) => {
   const fishstate = req.body.state
   const stage = await db.get(stagename).value();
   const { state, userid } = stage;
+  console.log(fishstate,state,userid)
   if (state == "catching") {
-    await change2onstage({ id: userid, stagename });
-    res.send({success:true});
-  } else if (state == "catchingthen2idle") {
     // 抓到鱼了
     if(fishstate){
-      const  fishnumber = db.get("user").find({id:userid}).value() + 1
+      const  fishnumber = db.get("user").find({id:userid}).value().fishnumber + 1
       await db
       .get("user")
       .find({id:userid})
       .assign({fishnumber})
       .write();
+      // 重写fishnumber
+      await savecsvfile()
     }
+    await change2onstage({ id: userid, stagename });
+    res.send({success:true});
+  } else if (state == "catchingthen2idle") {
+    // 抓到鱼了
+    if(fishstate){
+      const  fishnumber = db.get("user").find({id:userid}).value().fishnumber + 1
+      await db
+      .get("user")
+      .find({id:userid})
+      .assign({fishnumber})
+      .write();
+      // 重写fishnumber
+      await savecsvfile()
+    }
+    // 修改状态
     await db
       .get(stagename)
       .assign({ state: "idle" })
@@ -682,8 +697,8 @@ function delelastline(filename: any) {
 
 async function savecsvfile(){
   // const users = await db.get("user").fliter(o=>o.fishnumber>0).sortBy("fishnumber").value()
+  // 手写fishnumber排序
   const users = await db.get("user").sort((m,n)=>{return n.fishnumber-m.fishnumber}).filter(o=>o.fishnumber).value()
-  console.log(users)
   // 细节坑 必须加个前缀\ufeff表示 这是一个表头，就可以在excel中正常显示中文了
   let csvdata  =  '\ufeff用户名,ID,鱼头数,积分\n'
   // 存在鱼头数大于0的用户

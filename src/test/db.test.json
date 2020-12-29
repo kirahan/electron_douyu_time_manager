@@ -164,28 +164,32 @@
   },
   "user": [
     {
-      "id": "1",
-      "username": "admin",
-      "score": 3700,
-      "lastsign": 1608711991735
-    },
-    {
       "id": "2",
       "username": "test1",
-      "score": 2200,
-      "lastsign": 1606294316331
+      "score": 2300,
+      "lastsign": 1608751942131,
+      "fishnumber": 15
+    },
+    {
+      "id": "1",
+      "username": "admin",
+      "score": 2800,
+      "lastsign": 1608751940755,
+      "fishnumber": 4
+    },
+    {
+      "id": "4",
+      "username": "魔方直播",
+      "score": 2900,
+      "lastsign": 1606296023541,
+      "fishnumber": 2
     },
     {
       "id": "3",
       "username": "test2",
       "score": 1100,
-      "lastsign": 1605150427961
-    },
-    {
-      "id": "4",
-      "username": "魔方直播",
-      "score": 8000,
-      "lastsign": 1606296023541
+      "lastsign": 1605150427961,
+      "fishnumber": 0
     }
   ],
   "stage1": {

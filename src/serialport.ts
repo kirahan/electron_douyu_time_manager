@@ -62,7 +62,7 @@ server.post("/serialport/cnn", async (req, res) => {
     const command = data.toString().split('/')[0]
     const number = data.toString().split('/')[1]
     const state = data.toString().split('/')[2]
-    console.log('Data:', command,number)
+    console.log('Data:', command,number,state)
     if(command=='release'){
         if(state=='success'){
           axios.post(`http://localhost:3000/stage/release/${number}`,{state:true})
