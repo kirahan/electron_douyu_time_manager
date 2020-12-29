@@ -1,0 +1,212 @@
+{
+  "gift": [
+    {
+      "id": "191",
+      "name": "100鱼丸",
+      "score": "0",
+      "enable": true
+    },
+    {
+      "id": "192",
+      "name": "赞",
+      "score": "0",
+      "enable": true
+    },
+    {
+      "id": "193",
+      "name": "弱鸡",
+      "score": "0",
+      "enable": true
+    },
+    {
+      "id": "194",
+      "name": "666",
+      "score": "100",
+      "enable": true
+    },
+    {
+      "id": "195",
+      "name": "飞机",
+      "score": "1000",
+      "enable": true
+    },
+    {
+      "id": "196",
+      "name": "火箭",
+      "score": "5000",
+      "enable": true
+    }
+  ],
+  "command": [
+    {
+      "id": "1",
+      "command": "#查询",
+      "des": "查询用户积分"
+    },
+    {
+      "id": "2",
+      "command": "#签到",
+      "des": "每日签到，签到可以获取积分"
+    },
+    {
+      "id": "3",
+      "command": "#上1",
+      "des": "用户上第1个抓鱼台"
+    },
+    {
+      "id": "4",
+      "command": "#上2",
+      "des": "用户上第2个抓鱼台"
+    },
+    {
+      "id": "5",
+      "command": "#上3",
+      "des": "用户上第3个抓鱼台"
+    },
+    {
+      "id": "6",
+      "command": "#上4",
+      "des": "用户上第4个抓鱼台"
+    },
+    {
+      "id": "7",
+      "command": "#抓",
+      "des": "抓鱼"
+    },
+    {
+      "id": "8",
+      "command": "#下麦",
+      "des": "下麦"
+    },
+    {
+      "id": "9",
+      "command": "#喂鱼",
+      "des": "喂鱼"
+    }
+  ],
+  "config": {
+    "signconfig": {
+      "enable": true,
+      "signstep": "1",
+      "signscore": "100"
+    },
+    "stageconfig": {
+      "enable": true,
+      "stageminscore": "3000",
+      "stagespendscore": "1000",
+      "stageperiod": "60",
+      "feedscore": "100"
+    },
+    "hwconfig": {
+      "enable": true,
+      "hwport": "8988",
+      "hwonstage": "onstage",
+      "hwcatch": "catch",
+      "hwrelease": "release",
+      "hwoffstage": "offstage",
+      "hwfeedfish": "feedfish",
+      "hwserialport": "COM2",
+      "hwbaudrate": "9600",
+      "hwendflag": "0d0a"
+    },
+    "obsconfig": {
+      "enable": true,
+      "obsenablefiles": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "helpcontent": "签到和送礼物获取积分\n指令1：#查询\n指令2：#签到\n指令3：#上1\n指令4：#上2\n指令5：#上3\n指令6：#上4\n指令7：#抓\n指令8：#下\n指令9：#喂鱼"
+    }
+  },
+  "defaultconfig": {
+    "signconfig": {
+      "enable": true,
+      "signstep": "1",
+      "signscore": "100"
+    },
+    "stageconfig": {
+      "enable": true,
+      "stageminscore": "3000",
+      "stagespendscore": "1000",
+      "stageperiod": "60",
+      "feedscore": "100"
+    },
+    "hwconfig": {
+      "enable": true,
+      "hwport": "8988",
+      "hwonstage": "onstage",
+      "hwcatch": "catch",
+      "hwrelease": "release",
+      "hwoffstage": "offstage",
+      "hwfeedfish": "feedfish",
+      "hwserialport": "COM2",
+      "hwbaudrate": "9600",
+      "hwendflag": "0d0a"
+    },
+    "obsconfig": {
+      "enable": true,
+      "obsenablefiles": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "helpcontent": "签到和送礼物获取积分\n指令1：#查询\n指令2：#签到\n指令3：#上1\n指令4：#上2\n指令5：#上3\n指令6：#上4\n指令7：#抓\n指令8：#下\n指令9：#喂鱼"
+    }
+  },
+  "user": [
+    {
+      "id": "1",
+      "username": "admin",
+      "score": 3700,
+      "lastsign": 1608711991735
+    },
+    {
+      "id": "2",
+      "username": "test1",
+      "score": 2200,
+      "lastsign": 1606294316331
+    },
+    {
+      "id": "3",
+      "username": "test2",
+      "score": 1100,
+      "lastsign": 1605150427961
+    },
+    {
+      "id": "4",
+      "username": "魔方直播",
+      "score": 8000,
+      "lastsign": 1606296023541
+    }
+  ],
+  "stage1": {
+    "state": "idle",
+    "userid": ""
+  },
+  "stage2": {
+    "state": "idle",
+    "userid": ""
+  },
+  "version": "0.20",
+  "stage3": {
+    "state": "idle",
+    "userid": ""
+  },
+  "stage4": {
+    "state": "idle",
+    "userid": ""
+  },
+  "danmu": {
+    "roomid": "",
+    "iscnn": false
+  }
+}

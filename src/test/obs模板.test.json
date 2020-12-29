@@ -1,0 +1,705 @@
+{
+    "current_program_scene": "场景",
+    "current_scene": "场景",
+    "current_transition": "淡出",
+    "groups": [],
+    "modules": {
+        "advanced-scene-switcher": {
+            "active": true,
+            "autoStopEnable": false,
+            "autoStopSceneName": "",
+            "defaultTransitions": [],
+            "executableSwitches": [],
+            "fileSwitches": [],
+            "idleEnable": false,
+            "idleSceneName": "",
+            "idleTime": 60,
+            "idleTransitionName": "",
+            "ignoreIdleWindows": [],
+            "ignoreWindows": [],
+            "interval": 300,
+            "mediaSwitches": [],
+            "non_matching_scene": "",
+            "pauseScenes": [],
+            "pauseWindows": [],
+            "priority0": 0,
+            "priority1": 1,
+            "priority2": 2,
+            "priority3": 3,
+            "priority4": 4,
+            "priority5": 5,
+            "priority6": 6,
+            "randomSwitches": [],
+            "readEnabled": false,
+            "readPath": "",
+            "sceneRoundTrip": [],
+            "sceneTransitions": [],
+            "screenRegion": [],
+            "switch_if_not_matching": 0,
+            "switches": [],
+            "writeEnabled": false,
+            "writePath": ""
+        },
+        "auto-scene-switcher": {
+            "active": false,
+            "interval": 300,
+            "non_matching_scene": "",
+            "switch_if_not_matching": false,
+            "switches": []
+        },
+        "captions": {
+            "enabled": false,
+            "lang_id": 2052,
+            "provider": "mssapi",
+            "source": ""
+        },
+        "output-timer": {
+            "autoStartRecordTimer": false,
+            "autoStartStreamTimer": false,
+            "pauseRecordTimer": true,
+            "recordTimerHours": 0,
+            "recordTimerMinutes": 0,
+            "recordTimerSeconds": 30,
+            "streamTimerHours": 0,
+            "streamTimerMinutes": 0,
+            "streamTimerSeconds": 30
+        },
+        "scrab": {
+            "capture_hotkey": [],
+            "recapture_hotkey": []
+        },
+        "scripts-tool": []
+    },
+    "name": "调试场景",
+    "preview_locked": false,
+    "quick_transitions": [
+        {
+            "duration": 300,
+            "fade_to_black": false,
+            "hotkeys": [],
+            "id": 4,
+            "name": "直接切换"
+        },
+        {
+            "duration": 300,
+            "fade_to_black": false,
+            "hotkeys": [],
+            "id": 5,
+            "name": "淡出"
+        },
+        {
+            "duration": 300,
+            "fade_to_black": true,
+            "hotkeys": [],
+            "id": 6,
+            "name": "淡出"
+        }
+    ],
+    "saved_projectors": [],
+    "scaling_enabled": false,
+    "scaling_level": 0,
+    "scaling_off_x": 0.0,
+    "scaling_off_y": 0.0,
+    "scene_order": [
+        {
+            "name": "场景"
+        }
+    ],
+    "sources": [
+        {
+            "balance": 0.5,
+            "deinterlace_field_order": 0,
+            "deinterlace_mode": 0,
+            "enabled": true,
+            "flags": 0,
+            "hotkeys": {},
+            "id": "text_gdiplus",
+            "mixers": 0,
+            "monitoring_type": 0,
+            "muted": false,
+            "name": "上麦4文本",
+            "prev_ver": 436207618,
+            "private_settings": {},
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "settings": {
+                "file": "D:/CubeNodeLTD/obs/obs_yu/dist_electron/obstemplate/上麦4.txt",
+                "font": {
+                    "face": "微软雅黑",
+                    "flags": 1,
+                    "size": 36,
+                    "style": "Bold"
+                },
+                "outline": true,
+                "outline_color": 4278190250,
+                "read_from_file": true
+            },
+            "sync": 0,
+            "versioned_id": "text_gdiplus_v2",
+            "volume": 1.0
+        },
+        {
+            "balance": 0.5,
+            "deinterlace_field_order": 0,
+            "deinterlace_mode": 0,
+            "enabled": true,
+            "flags": 0,
+            "hotkeys": {},
+            "id": "text_gdiplus",
+            "mixers": 0,
+            "monitoring_type": 0,
+            "muted": false,
+            "name": "上麦3文本",
+            "prev_ver": 436207618,
+            "private_settings": {},
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "settings": {
+                "color": 4294967295,
+                "file": "D:/CubeNodeLTD/obs/obs_yu/dist_electron/obstemplate/上麦3.txt",
+                "font": {
+                    "face": "微软雅黑",
+                    "flags": 1,
+                    "size": 36,
+                    "style": "Bold"
+                },
+                "outline": true,
+                "outline_color": 4278233600,
+                "outline_size": 2,
+                "read_from_file": true
+            },
+            "sync": 0,
+            "versioned_id": "text_gdiplus_v2",
+            "volume": 1.0
+        },
+        {
+            "balance": 0.5,
+            "deinterlace_field_order": 0,
+            "deinterlace_mode": 0,
+            "enabled": true,
+            "flags": 0,
+            "hotkeys": {},
+            "id": "text_gdiplus",
+            "mixers": 0,
+            "monitoring_type": 0,
+            "muted": false,
+            "name": "上麦1文本",
+            "prev_ver": 436207618,
+            "private_settings": {},
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "settings": {
+                "chatlog": false,
+                "extents": false,
+                "extents_wrap": false,
+                "file": "D:/CubeNodeLTD/obs/obs_yu/dist_electron/obstemplate/上麦1.txt",
+                "font": {
+                    "face": "微软雅黑",
+                    "flags": 1,
+                    "size": 36,
+                    "style": "Bold"
+                },
+                "outline": true,
+                "outline_color": 4294911462,
+                "read_from_file": true,
+                "transform": 0
+            },
+            "sync": 0,
+            "versioned_id": "text_gdiplus_v2",
+            "volume": 1.0
+        },
+        {
+            "balance": 0.5,
+            "deinterlace_field_order": 0,
+            "deinterlace_mode": 0,
+            "enabled": true,
+            "flags": 0,
+            "hotkeys": {},
+            "id": "text_gdiplus",
+            "mixers": 0,
+            "monitoring_type": 0,
+            "muted": false,
+            "name": "上麦2文本",
+            "prev_ver": 436207618,
+            "private_settings": {},
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "settings": {
+                "color": 4294964253,
+                "file": "D:/CubeNodeLTD/obs/obs_yu/dist_electron/obstemplate/上麦2.txt",
+                "font": {
+                    "face": "微软雅黑",
+                    "flags": 1,
+                    "size": 36,
+                    "style": "Bold"
+                },
+                "outline": true,
+                "outline_color": 4278190080,
+                "read_from_file": true
+            },
+            "sync": 0,
+            "versioned_id": "text_gdiplus_v2",
+            "volume": 1.0
+        },
+        {
+            "balance": 0.5,
+            "deinterlace_field_order": 0,
+            "deinterlace_mode": 0,
+            "enabled": true,
+            "flags": 0,
+            "hotkeys": {},
+            "id": "text_gdiplus",
+            "mixers": 0,
+            "monitoring_type": 0,
+            "muted": false,
+            "name": "上台标题",
+            "prev_ver": 436207618,
+            "private_settings": {},
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "settings": {
+                "color": 4278233600,
+                "font": {
+                    "face": "微软雅黑",
+                    "flags": 1,
+                    "size": 48,
+                    "style": "Bold"
+                },
+                "outline": true,
+                "outline_color": 4278190080,
+                "text": "弹幕抓鱼台"
+            },
+            "sync": 0,
+            "versioned_id": "text_gdiplus_v2",
+            "volume": 1.0
+        },
+        {
+            "balance": 0.5,
+            "deinterlace_field_order": 0,
+            "deinterlace_mode": 0,
+            "enabled": true,
+            "flags": 0,
+            "hotkeys": {
+                "OBSBasic.SelectScene": [],
+                "libobs.hide_scene_item.上台标题": [],
+                "libobs.hide_scene_item.上麦1文本": [],
+                "libobs.hide_scene_item.上麦2文本": [],
+                "libobs.hide_scene_item.上麦3文本": [],
+                "libobs.hide_scene_item.上麦4文本": [],
+                "libobs.hide_scene_item.帮助": [],
+                "libobs.hide_scene_item.礼物": [],
+                "libobs.hide_scene_item.签到": [],
+                "libobs.show_scene_item.上台标题": [],
+                "libobs.show_scene_item.上麦1文本": [],
+                "libobs.show_scene_item.上麦2文本": [],
+                "libobs.show_scene_item.上麦3文本": [],
+                "libobs.show_scene_item.上麦4文本": [],
+                "libobs.show_scene_item.帮助": [],
+                "libobs.show_scene_item.礼物": [],
+                "libobs.show_scene_item.签到": []
+            },
+            "id": "scene",
+            "mixers": 0,
+            "monitoring_type": 0,
+            "muted": false,
+            "name": "场景",
+            "prev_ver": 436207618,
+            "private_settings": {},
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "settings": {
+                "custom_size": false,
+                "id_counter": 12,
+                "items": [
+                    {
+                        "align": 5,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "bounds_align": 0,
+                        "bounds_type": 0,
+                        "crop_bottom": 0,
+                        "crop_left": 0,
+                        "crop_right": 0,
+                        "crop_top": 0,
+                        "group_item_backup": false,
+                        "id": 1,
+                        "locked": false,
+                        "name": "上台标题",
+                        "pos": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "private_settings": {
+                            "color": "#55ffaaff",
+                            "color-preset": 1
+                        },
+                        "rot": 0.0,
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "scale_filter": "disable",
+                        "visible": true
+                    },
+                    {
+                        "align": 5,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "bounds_align": 0,
+                        "bounds_type": 0,
+                        "crop_bottom": 0,
+                        "crop_left": 0,
+                        "crop_right": 0,
+                        "crop_top": 0,
+                        "group_item_backup": false,
+                        "id": 3,
+                        "locked": false,
+                        "name": "帮助",
+                        "pos": {
+                            "x": 1574.0,
+                            "y": 0.0
+                        },
+                        "private_settings": {
+                            "color": "",
+                            "color-preset": 4
+                        },
+                        "rot": 0.0,
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "scale_filter": "disable",
+                        "visible": true
+                    },
+                    {
+                        "align": 5,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "bounds_align": 0,
+                        "bounds_type": 0,
+                        "crop_bottom": 0,
+                        "crop_left": 0,
+                        "crop_right": 0,
+                        "crop_top": 0,
+                        "group_item_backup": false,
+                        "id": 4,
+                        "locked": false,
+                        "name": "礼物",
+                        "pos": {
+                            "x": 1190.0,
+                            "y": 804.0
+                        },
+                        "private_settings": {
+                            "color": "",
+                            "color-preset": 3
+                        },
+                        "rot": 0.0,
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "scale_filter": "disable",
+                        "visible": true
+                    },
+                    {
+                        "align": 5,
+                        "bounds": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "bounds_align": 0,
+                        "bounds_type": 0,
+                        "crop_bottom": 0,
+                        "crop_left": 0,
+                        "crop_right": 0,
+                        "crop_top": 0,
+                        "group_item_backup": false,
+                        "id": 5,
+                        "locked": false,
+                        "name": "签到",
+                        "pos": {
+                            "x": 554.0,
+                            "y": 0.0
+                        },
+                        "private_settings": {
+                            "color": "",
+                            "color-preset": 3
+                        },
+                        "rot": 0.0,
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "scale_filter": "disable",
+                        "visible": true
+                    },
+                    {
+                        "align": 5,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "bounds_align": 0,
+                        "bounds_type": 0,
+                        "crop_bottom": 0,
+                        "crop_left": 0,
+                        "crop_right": 0,
+                        "crop_top": 0,
+                        "group_item_backup": false,
+                        "id": 11,
+                        "locked": false,
+                        "name": "上麦4文本",
+                        "pos": {
+                            "x": 0.0,
+                            "y": 809.0
+                        },
+                        "private_settings": {
+                            "color": "",
+                            "color-preset": 6
+                        },
+                        "rot": 0.0,
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "scale_filter": "disable",
+                        "visible": true
+                    },
+                    {
+                        "align": 5,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "bounds_align": 0,
+                        "bounds_type": 0,
+                        "crop_bottom": 0,
+                        "crop_left": 0,
+                        "crop_right": 0,
+                        "crop_top": 0,
+                        "group_item_backup": false,
+                        "id": 10,
+                        "locked": false,
+                        "name": "上麦3文本",
+                        "pos": {
+                            "x": 0.0,
+                            "y": 581.0
+                        },
+                        "private_settings": {
+                            "color": "",
+                            "color-preset": 6
+                        },
+                        "rot": 0.0,
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "scale_filter": "disable",
+                        "visible": true
+                    },
+                    {
+                        "align": 5,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "bounds_align": 0,
+                        "bounds_type": 0,
+                        "crop_bottom": 0,
+                        "crop_left": 0,
+                        "crop_right": 0,
+                        "crop_top": 0,
+                        "group_item_backup": false,
+                        "id": 6,
+                        "locked": false,
+                        "name": "上麦2文本",
+                        "pos": {
+                            "x": 0.0,
+                            "y": 337.0
+                        },
+                        "private_settings": {
+                            "color": "",
+                            "color-preset": 6
+                        },
+                        "rot": 0.0,
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "scale_filter": "disable",
+                        "visible": true
+                    },
+                    {
+                        "align": 5,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "bounds_align": 0,
+                        "bounds_type": 0,
+                        "crop_bottom": 0,
+                        "crop_left": 0,
+                        "crop_right": 0,
+                        "crop_top": 0,
+                        "group_item_backup": false,
+                        "id": 8,
+                        "locked": false,
+                        "name": "上麦1文本",
+                        "pos": {
+                            "x": 0.0,
+                            "y": 93.0
+                        },
+                        "private_settings": {
+                            "color": "",
+                            "color-preset": 6
+                        },
+                        "rot": 0.0,
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "scale_filter": "disable",
+                        "visible": true
+                    }
+                ]
+            },
+            "sync": 0,
+            "versioned_id": "scene",
+            "volume": 1.0
+        },
+        {
+            "balance": 0.5,
+            "deinterlace_field_order": 0,
+            "deinterlace_mode": 0,
+            "enabled": true,
+            "flags": 0,
+            "hotkeys": {},
+            "id": "text_gdiplus",
+            "mixers": 0,
+            "monitoring_type": 0,
+            "muted": false,
+            "name": "帮助",
+            "prev_ver": 436207618,
+            "private_settings": {},
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "settings": {
+                "align": "left",
+                "chatlog": false,
+                "file": "D:/CubeNodeLTD/obs/obs_yu/dist_electron/obstemplate/帮助.txt",
+                "font": {
+                    "face": "Arial",
+                    "flags": 1,
+                    "size": 36,
+                    "style": "Bold"
+                },
+                "outline": true,
+                "outline_color": 4294922760,
+                "outline_size": 4,
+                "read_from_file": true,
+                "vertical": false
+            },
+            "sync": 0,
+            "versioned_id": "text_gdiplus_v2",
+            "volume": 1.0
+        },
+        {
+            "balance": 0.5,
+            "deinterlace_field_order": 0,
+            "deinterlace_mode": 0,
+            "enabled": true,
+            "flags": 0,
+            "hotkeys": {},
+            "id": "text_gdiplus",
+            "mixers": 0,
+            "monitoring_type": 0,
+            "muted": false,
+            "name": "礼物",
+            "prev_ver": 436207618,
+            "private_settings": {},
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "settings": {
+                "bk_opacity": 0,
+                "chatlog": false,
+                "color": 4282404351,
+                "extents": false,
+                "file": "D:\\CubeNodeLTD\\obs\\obs_yu\\dist_electron\\obstemplate\\礼物.txt",
+                "font": {
+                    "face": "Arial",
+                    "flags": 0,
+                    "size": 36,
+                    "style": "Regular"
+                },
+                "outline": true,
+                "outline_size": 7,
+                "read_from_file": true,
+                "text": "法国"
+            },
+            "sync": 0,
+            "versioned_id": "text_gdiplus_v2",
+            "volume": 1.0
+        },
+        {
+            "balance": 0.5,
+            "deinterlace_field_order": 0,
+            "deinterlace_mode": 0,
+            "enabled": true,
+            "flags": 0,
+            "hotkeys": {},
+            "id": "text_gdiplus",
+            "mixers": 0,
+            "monitoring_type": 0,
+            "muted": false,
+            "name": "签到",
+            "prev_ver": 436207618,
+            "private_settings": {},
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "settings": {
+                "antialiasing": false,
+                "color": 4294906111,
+                "file": "D:/CubeNodeLTD/obs/obs_yu/dist_electron/obstemplate/签到.txt",
+                "font": {
+                    "face": "Arial",
+                    "flags": 0,
+                    "size": 36,
+                    "style": "Regular"
+                },
+                "outline": true,
+                "outline_size": 5,
+                "read_from_file": true,
+                "text": "签到信息"
+            },
+            "sync": 0,
+            "versioned_id": "text_gdiplus_v2",
+            "volume": 1.0
+        }
+    ],
+    "transition_duration": 300,
+    "transitions": []
+}

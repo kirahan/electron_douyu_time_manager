@@ -1,32 +1,85 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <v-app dark class="main">
+    
+   
+    <v-main>
+      <router-view :key="this.$route.path"></router-view>
+    </v-main>
+
+    <v-card>
+       <v-tabs fixed-tabs background-color="#304457"  color="#8F80FB"  dark v-model="tab">
+        <v-tab v-for="t in tablist" :key="t.text" @click="gotopage(t.link)" class="headline">{{t.text}}</v-tab>
+        </v-tabs>
+    </v-card>
+  </v-app>
 </template>
 
+<script lang="ts">
+import { Component, Vue, Ref, Emit } from "vue-property-decorator";
+
+@Component({
+  components: { },
+})
+export default class App extends Vue {
+  constructor() {
+    super();
+  }
+  tab=0;
+  tablist = [
+    {
+      name: "",
+      text: "简介",
+      link: "/"
+    },{
+      name: "",
+      text: "弹幕",
+      link: "/danmu"
+    },{
+      name: "",
+      text: "礼物",
+      link: "/gift"
+    },{
+      name: "",
+      text: "命令",
+      link: "/command"
+    },{
+      name: "",
+      text: "用户",
+      link: "/user"
+    },
+    // {
+    //   name: "",
+    //   text: "硬件",
+    //   link: "/hw"
+    // },
+    {
+      name: "",
+      text: "设置",
+      link: "/setting"
+    },
+    // {
+    //   name: "",
+    //   text: "OBS",
+    //   link: "/obs"
+    // }
+  ]
+
+
+  gotopage(url){
+    if(this.$route.path!=url){
+    this.$router.push(`${url}`)
+    }
+  }
+
+}
+</script>
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+.main {
+  background-color: #1D2935 !important;
+  overflow: hidden;
 }
-
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+.electron-dragable {
+  -webkit-app-region: drag;
 }
 </style>
