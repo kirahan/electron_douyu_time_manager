@@ -23,7 +23,11 @@ const danmu = ()=>{
             dmiscnn = true
         }
         console.log('[dmiscnn]',dmiscnn)
-        event.reply('server-tell-client-dmiscnn',{dmiscnn,roomid})
+        if(dmiscnn){
+            event.reply('server-tell-client-dmiscnn',{dmiscnn,roomid})
+        }else{
+            event.reply('server-tell-client-dmiscnn',{dmiscnn,roomid})
+        }
     })
 
 

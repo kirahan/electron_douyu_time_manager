@@ -68,6 +68,33 @@
                           }}</v-list-item-subtitle>
                         </div>
 
+                        <div
+                          v-else-if="
+                            data.hasOwnProperty('type') && data.type == 'switch'
+                          "
+                          class="obscheckboxpannel"
+                        >
+                          <v-list-item-title>{{
+                            data.title
+                          }}</v-list-item-title>
+                          <v-list-item-subtitle>{{
+                            data.subtitle1
+                          }}</v-list-item-subtitle>
+                          <v-text-field
+                            v-if="!data.inputhide"
+                            class="width-max"
+                            dense
+                            v-model="data.value"
+                          ></v-text-field>
+                          <v-list-item-subtitle >
+                                <v-switch
+                              v-model="data.flag"
+                            ></v-switch>
+                          </v-list-item-subtitle>
+                          
+                    
+                        </div>
+
                         <div v-else class="obscheckboxpannel">
                           <v-list-item-title>{{
                             data.title
@@ -232,6 +259,20 @@ export default class Setting extends Vue {
           value: "100",
           subtitle1: "",
           subtitle2: "分",
+        },
+        {
+          title: "默认直播间",
+          value: null,
+          subtitle1: "",
+          subtitle2: "",
+        },
+        {
+          title: "直播间自动重连",
+          value: 1,
+          flag: false,
+          subtitle1: "",
+          subtitle2: "分",
+          type: "switch"
         },
       ],
     },
@@ -412,6 +453,9 @@ export default class Setting extends Vue {
     this.configlist.signconfig.enable = config.data.signconfig.enable;
     this.configlist.signconfig.data[0].value = config.data.signconfig.signstep;
     this.configlist.signconfig.data[1].value = config.data.signconfig.signscore;
+    this.configlist.signconfig.data[2].value = config.data.signconfig.defaultroomid;
+    this.configlist.signconfig.data[3].value = config.data.signconfig.cnnstep;
+    this.configlist.signconfig.data[3].flag = config.data.signconfig.dmautorecnn;
 
     // set stageconfig
     this.configlist.stageconfig.enable = config.data.stageconfig.enable;
@@ -479,6 +523,9 @@ export default class Setting extends Vue {
       enable: this.configlist.signconfig.enable,
       signstep: this.configlist.signconfig.data[0].value,
       signscore: this.configlist.signconfig.data[1].value,
+      defaultroomid: this.configlist.signconfig.data[2].value,
+      dmautorecnn: this.configlist.signconfig.data[3].flag,
+      cnnstep: this.configlist.signconfig.data[3].value,
     };
     const stageconfig = {
       enable: this.configlist.stageconfig.enable,
@@ -614,6 +661,10 @@ export default class Setting extends Vue {
 .obscheckboxpannel {
   display: flex;
   width: 100%;
+}
+.switchpannel {
+  display: flex;
+  width: 60%;
 }
 .width-max {
   min-width: fit-content;

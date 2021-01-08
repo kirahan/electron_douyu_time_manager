@@ -15,7 +15,10 @@ const routes: Array<RouteConfig> = [
   {
     path: '/',
     name: 'Danmu',
-    component: Danmu
+    component: Danmu,
+    meta: {
+      keepAlive:true
+    }
   },
   {
     path: '/danmu',

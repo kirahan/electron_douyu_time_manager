@@ -34,7 +34,13 @@
                   >{{formconfig.serialport.btnclosetitle}}</v-btn
                 >
               </div>
-             
+              <v-col cols="12" class="eventlog rounded-lg">
+                <div v-for="event in eventlist" :key="event.message+Math.random()">
+                  <span class="pr-3" style="color:red">[{{event.type}}]</span>
+                  <span color="blue" class="pr-3" style="color:#4FC1E9">{{event.name}}</span>
+                  <span color="green" class="">:{{event.message}}</span>
+                </div>
+            </v-col>
             </v-col>
             <v-col cols="8" class="danmu rounded-lg">
                 <div v-for="msg in danmumsgs" :key="msg.now">
@@ -68,7 +74,11 @@ export default class DanMu extends Vue {
   roomcnn = null
 
   roomid = null;
+  // 系统事件记录
+  eventlist = []
+  // 弹幕消息
   danmumsgs = []
+  // 礼物消息
   danmugfs = []
   danmucommands = []
   serialportconfig:any = {}
@@ -95,7 +105,11 @@ export default class DanMu extends Vue {
   spiscnn = null
   dmiscnn = false
   
-
+  roomconfig = {
+    defaultroomid : '',
+    cnnstep:1,
+    dmautorecnn: false
+  }
 
   async getdanmucommands(){
     const  res = await this.$http.get('/command')
@@ -105,7 +119,15 @@ export default class DanMu extends Vue {
     console.log(this.danmucommands)
   }
 
-
+  async getconfig(){
+    const config = await this.$http.get("/config");
+    // set signconfig
+    this.roomconfig.defaultroomid = config.data.signconfig.defaultroomid;
+    this.roomconfig.cnnstep = config.data.signconfig.cnnstep;
+    this.roomconfig.dmautorecnn = config.data.signconfig.dmautorecnn;
+    this.roomid = this.roomconfig.defaultroomid || ''
+    console.log(this.roomconfig)
+  }
 
 
 
@@ -211,6 +233,7 @@ export default class DanMu extends Vue {
 
     window.ipcRenderer.on("server-tell-client-dmiscnn",(event, {dmiscnn,roomid}) => {
       console.log('[dmiscnn]',dmiscnn)
+
       this.dmiscnn = dmiscnn;
       if(dmiscnn){
         this.roomid = roomid
@@ -232,10 +255,25 @@ export default class DanMu extends Vue {
     window.ipcRenderer.on("room-event",(event, arg) => {
       if(arg=='connect'){
           console.log('connect')
+          this.eventlist.push({
+            type:'直播间',
+            name:'连接',
+            message:'房间连接成功'
+          })
       }else if(arg=='err'){
           console.log('err')
+          this.eventlist.push({
+            type:'直播间',
+            name:'连接',
+            message:'直播间异常'
+          })
       }else if(arg=='disconnect'){
           console.log('disconnect')
+          this.eventlist.push({
+            type:'直播间',
+            name:'连接',
+            message:'断开连接'
+          })
       }
     })
 
@@ -366,11 +404,11 @@ async checksubmitorregistration(arg){
 
   created(){
     this.init()
+    this.getconfig()
     this.getdanmucommands();
     this.getserialports()
     this.getspcnninfo()
     this.getdanmuinfo()
-    this.roomid =  9213704
   }
 }
 </script>
@@ -403,6 +441,13 @@ async checksubmitorregistration(arg){
   display: flex;
   flex-direction:column;
   justify-content:flex-end;
+}
+.eventlog{
+  background-color: #1d2935;
+  display: flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  height: 88%;
 }
 .obscheckboxpannel {
   display: flex;

@@ -3,7 +3,9 @@
     
    
     <v-main>
-      <router-view :key="this.$route.path"></router-view>
+      <keep-alive>
+              <router-view :key="this.$route.path"></router-view>
+      </keep-alive>
     </v-main>
 
     <v-card>
