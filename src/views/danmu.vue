@@ -212,7 +212,9 @@ export default class DanMu extends Vue {
     window.ipcRenderer.on("server-tell-client-dmiscnn",(event, {dmiscnn,roomid}) => {
       console.log('[dmiscnn]',dmiscnn)
       this.dmiscnn = dmiscnn;
-      this.roomid = roomid
+      if(dmiscnn){
+        this.roomid = roomid
+      }
       
       if(dmiscnn){
       this.formconfig.danmu.cnncolor = '#33D76C'
@@ -368,7 +370,7 @@ async checksubmitorregistration(arg){
     this.getserialports()
     this.getspcnninfo()
     this.getdanmuinfo()
-    // this.roomid =  9213704
+    this.roomid =  9213704
   }
 }
 </script>

@@ -201,14 +201,19 @@ server.post("/user", async (req, res) => {
 
 // 修改user
 server.put("/user", (req, res) => {
-  const { id, username, score } = req.body;
+  let { id, username, score ,fishnumber} = req.body;
+  fishnumber = Number(fishnumber)
   const newuser = db
     .get("user")
     .find({ id })
     .assign({ score })
+    .assign({ fishnumber })
     .write();
   res.send(newuser);
 });
+
+
+// 修改fishnumber
 
 // 删除user
 server.delete("/user/:id", (req, res) => {
