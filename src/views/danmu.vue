@@ -201,6 +201,12 @@ export default class DanMu extends Vue {
     this.getspcnninfo()
   }
   async  init(){
+    window.ipcRenderer.removeAllListeners("danmu-gift")
+    window.ipcRenderer.removeAllListeners("danmu-msg")
+    // console.log('try to  remove gift')
+    // window.ipcRenderer.removeListener("danmu-gift",() =>{
+    //   console.log('remove gift')
+    // })
     window.ipcRenderer.send("danmu-client-init", 'ping');
 
     window.ipcRenderer.on("server-tell-client-dmiscnn",(event, {dmiscnn,roomid}) => {
@@ -235,120 +241,126 @@ export default class DanMu extends Vue {
       if(this.danmumsgs.length>20){
                   this.danmumsgs.splice(0,1)
                   this.danmumsgs.push(arg)
-              }else{
-                  this.danmumsgs.push(arg)
-              }
-            const getcommand = this.danmucommands.indexOf(arg.txt)
-            if(getcommand!=-1){
-              // 查询
-              console.log(getcommand,arg.nn)
-              if(getcommand == 0){
-                const user = await this.$http.get(`/userbyusername/${arg.nn}`)
-                if(user.data){
-                              const check = await this.$http.post('/check',{id:user.data.id})
+      }else{
+          this.danmumsgs.push(arg)
+      }
+      const getcommand = this.danmucommands.indexOf(arg.txt)
+      if(getcommand!=-1){
+        // getcommand=0 查询
+        // getcommand=1 签到
+        // getcommand=2 上1
+        // getcommand=3 上2
+        // getcommand=4 上3
+        // getcommand=5 上4
+        // getcommand=6 抓鱼
+        // getcommand=7 下麦
+        // getcommand=8 喂鱼
+        await this.checksubmitorregistration(arg)
+        if(getcommand == 0){
+          const user = await this.$http.get(`/userbyusername/${arg.nn}`)
+          if(user.data){
+                        const check = await this.$http.post('/check',{id:user.data.id})
+          }
+          
+        }else if(getcommand == 1){
+          const user = await this.$http.get(`/userbyusername/${arg.nn}`)
+          if(user.data){
+            const sign = await this.$http.post('/sign',{
+              id: user.data.id,
+              now: Date.now()
+            })
+          }
+        }else if(getcommand == 2){
+          const user = await this.$http.get(`/userbyusername/${arg.nn}`)
+          if(user.data){
+            const id = user.data.id
+            const stagename = 'stage1'
+            const onstage = await this.$http.post(`/stage/onstage/`,{id,stagename}) 
 
-                }else{
-                  const users = await this.$http.get('/user')
-                  const usernumber = users.data.length
-                  const id = String(usernumber+1)
-                  const user = await this.$http.post('user',{
-                      id,
-                      username: arg.nn, 
-                      score: 0,
-                      lastsign:'',
-                      fishnumber:0
-                  })
-                  const check = await this.$http.post('/check',{id})
-                  
-                }
-              }else if(getcommand == 1){
-                const user = await this.$http.get(`/userbyusername/${arg.nn}`)
-                if(user.data){
-                  const sign = await this.$http.post('/sign',{
-                    id: user.data.id,
-                    now: Date.now()
-                  })
-                }else{
-                  const users = await this.$http.get('/user')
-                  const usernumber = users.data.length
-                  const id = String(usernumber+1)
-                  const user = await this.$http.post('user',{
-                      id,
-                      username: arg.nn, 
-                      score: 0,
-                      lastsign:'',
-                      fishnumber:0
-                  })
-                  const sign = await this.$http.post('/sign',{
-                    id,
-                    now: Date.now()
-                  })
-                  
-                }
-              }else if(getcommand == 2){
-                const user = await this.$http.get(`/userbyusername/${arg.nn}`)
-                if(user.data){
-                  const id = user.data.id
-                  const stagename = 'stage1'
-                  const onstage = await this.$http.post(`/stage/onstage/`,{id,stagename}) 
+          }
+        }else if(getcommand == 3){
+          const user = await this.$http.get(`/userbyusername/${arg.nn}`)
+          if(user.data){
+            const id = user.data.id
+            const stagename = 'stage2'
+            const onstage = await this.$http.post(`/stage/onstage/`,{id,stagename}) 
+          }
+        }else if(getcommand == 4){
+          const user = await this.$http.get(`/userbyusername/${arg.nn}`)
+          if(user.data){
+            const id = user.data.id
+            const stagename = 'stage3'
+            const onstage = await this.$http.post(`/stage/onstage/`,{id,stagename}) 
+          }
+        }else if(getcommand == 5){
+          const user = await this.$http.get(`/userbyusername/${arg.nn}`)
+          if(user.data){
+            const id = user.data.id
+            const stagename = 'stage4'
+            const onstage = await this.$http.post(`/stage/onstage/`,{id,stagename}) 
+          }
+        }else if(getcommand == 6){
+          const user = await this.$http.get(`/userbyusername/${arg.nn}`)
+          if(user.data){
+            const id = user.data.id
+            const arg = await this.$http.post('/stage/catch',{id}) 
+          }
+        }else if(getcommand == 7){
+          const user = await this.$http.get(`/userbyusername/${arg.nn}`)
+          if(user.data){
+            const id = user.data.id
+            const arg = await this.$http.post('/stage/offstage',{id}) 
+          }
+        }else if(getcommand == 8){
+          const user = await this.$http.get(`/userbyusername/${arg.nn}`)
+          if(user.data){
+            const id = user.data.id
+            const res = await this.$http.post(`/feedfish/`,{id}) 
+          }
+        }else{
 
-                }
-              }else if(getcommand == 3){
-                const user = await this.$http.get(`/userbyusername/${arg.nn}`)
-                if(user.data){
-                  const id = user.data.id
-                  const stagename = 'stage2'
-                  const onstage = await this.$http.post(`/stage/onstage/`,{id,stagename}) 
-                }
-              }else if(getcommand == 4){
-                const user = await this.$http.get(`/userbyusername/${arg.nn}`)
-                if(user.data){
-                  const id = user.data.id
-                  const stagename = 'stage3'
-                  const onstage = await this.$http.post(`/stage/onstage/`,{id,stagename}) 
-                }
-              }else if(getcommand == 5){
-                const user = await this.$http.get(`/userbyusername/${arg.nn}`)
-                if(user.data){
-                  const id = user.data.id
-                  const stagename = 'stage4'
-                  const onstage = await this.$http.post(`/stage/onstage/`,{id,stagename}) 
-                }
-              }else if(getcommand == 6){
-                const user = await this.$http.get(`/userbyusername/${arg.nn}`)
-                if(user.data){
-                  const id = user.data.id
-                  const arg = await this.$http.post('/stage/catch',{id}) 
-                }
-              }else if(getcommand == 7){
-                const user = await this.$http.get(`/userbyusername/${arg.nn}`)
-                if(user.data){
-                  const id = user.data.id
-                  const arg = await this.$http.post('/stage/offstage',{id}) 
-                }
-              }else if(getcommand == 8){
-                const user = await this.$http.get(`/userbyusername/${arg.nn}`)
-                if(user.data){
-                  const id = user.data.id
-                  const res = await this.$http.post(`/feedfish/`) 
-                }
-              }else{
-
-              }
-            }
+        }
+      }
     })
 
-
-    window.ipcRenderer.on("danmu-gift",(event, res) => {
-        const username = res.nn
+    window.ipcRenderer.on("danmu-gift",async (event, res) => {
+            await this.checksubmitorregistration(res)
+            const username = res.nn
             const gfid = res.gfid
             const gfcnt = res.gfcnt
             const hits = res.hits
             console.log(username,gfid,gfcnt,hits);
             console.log(res)
             this.danmugfs.push(res)
+            const user = await this.$http.get(`/userbyusername/${res.nn}`)
+            if(user.data){
+              const id = user.data.id
+              const arg = await this.$http.post('/catchgift',{id,gfid}) 
+            }
     })
+
+    
+
   }
+
+
+async checksubmitorregistration(arg){
+   console.log('检查用户是否存在')
+   const user = await this.$http.get(`/userbyusername/${arg.nn}`)
+          if(!user.data){
+            console.log('用户不存在,创建用户')
+            const users = await this.$http.get('/user')
+            const usernumber = users.data.length
+            const id = String(usernumber+1)+String(Math.floor(Math.random()*1000))
+            const user = await this.$http.post('user',{
+                id,
+                username: arg.nn, 
+                score: 0,
+                lastsign:'',
+                fishnumber:0
+            })        
+          }
+}
 
   created(){
     this.init()
@@ -356,6 +368,7 @@ export default class DanMu extends Vue {
     this.getserialports()
     this.getspcnninfo()
     this.getdanmuinfo()
+    // this.roomid =  9213704
   }
 }
 </script>

@@ -26,11 +26,12 @@ export default class App extends Vue {
   }
   tab=0;
   tablist = [
+    // {
+    //   name: "",
+    //   text: "简介",
+    //   link: "/"
+    // },
     {
-      name: "",
-      text: "简介",
-      link: "/"
-    },{
       name: "",
       text: "弹幕",
       link: "/danmu"

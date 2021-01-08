@@ -74,7 +74,7 @@ const danmu = ()=>{
           });
 
           roomcnn.on("dgb",async(res)=>{
-            console.log("[gift]", `<lv ${res.level}> [${res.nn}] ${res.txt}`);
+            console.log("[gift]", `<lv ${res.level}> [${res.nn}]`);
             if(danmuchannel){   
                 danmuchannel.reply('danmu-gift', res)
             }else{

@@ -283,7 +283,7 @@ export default class Setting extends Vue {
           subtitle2: "",
         },
         {
-          title: "固定结束符",
+          title: "固定结束符(16进制)",
           value: "0d0a",
           subtitle1: "",
           subtitle2: "",
@@ -456,18 +456,18 @@ export default class Setting extends Vue {
     this.serialportlist = ports;
   }
 
-  async cnnsp() {
-    const port = this.configlist.hwconfig.data[0].value;
-    const baudrate = this.configlist.hwconfig.data[1].value;
-    const endflag = this.configlist.hwconfig.data[2].value;
-    console.log(port, baudrate, endflag);
-    const cnn = await this.$http.post("/serialport/cnn", {
-      port,
-      baudrate,
-      endflag,
-    });
-    console.log(cnn.data);
-  }
+  // async cnnsp() {
+  //   const port = this.configlist.hwconfig.data[0].value;
+  //   const baudrate = this.configlist.hwconfig.data[1].value;
+  //   const endflag = this.configlist.hwconfig.data[2].value;
+  //   console.log(port, baudrate, endflag);
+  //   const cnn = await this.$http.post("/serialport/cnn", {
+  //     port,
+  //     baudrate,
+  //     endflag,
+  //   });
+  //   console.log(cnn.data);
+  // }
 
   async getdefaultconfig() {
     const config = await this.$http.get("/defaultconfig");
@@ -575,10 +575,6 @@ export default class Setting extends Vue {
     this.getconfig();
     this.getserialports();
     this.getdefaultconfig();
-    setTimeout(()=>{
-      this.cnnsp();
-    },500)
-    
   }
 }
 </script>

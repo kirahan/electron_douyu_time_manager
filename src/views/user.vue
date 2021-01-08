@@ -222,9 +222,12 @@ async filldata(data){
     const res = await this.$http.post('/stage/setidle',{})
   }
 
+
   created(){
     this.setstageidle()
-    this.getuserdata()
+    const dataupdate = setInterval(() =>{
+      this.getuserdata()
+    },1000)
   }
 
 }

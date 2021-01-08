@@ -1,39 +1,15 @@
 {
   "gift": [
     {
-      "id": "191",
-      "name": "100鱼丸",
-      "score": "0",
-      "enable": true
-    },
-    {
-      "id": "192",
-      "name": "赞",
-      "score": "0",
-      "enable": true
-    },
-    {
-      "id": "193",
-      "name": "弱鸡",
-      "score": "0",
-      "enable": true
-    },
-    {
-      "id": "194",
-      "name": "666",
+      "id": "20060",
+      "name": "没排面",
       "score": "100",
       "enable": true
     },
     {
-      "id": "195",
-      "name": "飞机",
-      "score": "1000",
-      "enable": true
-    },
-    {
-      "id": "196",
-      "name": "火箭",
-      "score": "5000",
+      "id": "20064",
+      "name": "有牌面",
+      "score": "200",
       "enable": true
     }
   ],
@@ -75,7 +51,7 @@
     },
     {
       "id": "8",
-      "command": "#下麦",
+      "command": "#下",
       "des": "下麦"
     },
     {
@@ -200,7 +176,7 @@
     "state": "idle",
     "userid": ""
   },
-  "version": "0.20",
+  "version": "0.30",
   "stage3": {
     "state": "idle",
     "userid": ""

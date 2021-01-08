@@ -32,9 +32,11 @@ server.get("/serialport/iscnn", async (req, res) => {
   
 });
 
+
 // 链接某个串口
 server.post("/serialport/cnn", async (req, res) => {
   const  {port, baudrate} = req.body
+  console.log('cnn seriialport',port, baudrate,cnn==null?'未连接串口':`之前已经连接过串口编号${cnn.path}`)
   cnn =  new  serialport(port,{
     baudRate : Number(baudrate),
   },(err)=>{
@@ -51,9 +53,9 @@ server.post("/serialport/cnn", async (req, res) => {
     console.log('cnn closed')
   })
 
-  // 断开触发
-  cnn.on('error', function() {
-    console.log('cnn error')
+  // 错误触发
+  cnn.on('error', function(err) {
+    console.log('cnn error',err.message)
   })
 
   // Switches the port into "flowing mode"
@@ -61,8 +63,8 @@ server.post("/serialport/cnn", async (req, res) => {
     
     const command = data.toString().split('/')[0]
     const number = data.toString().split('/')[1]
-    const state = data.toString().split('/')[2]
-    console.log('Data:', command,number,state)
+    const state = data.toString().split('/')[2].trim()
+    console.log('Data:', command,number,state,state=='success')
     if(command=='release'){
         if(state=='success'){
           axios.post(`http://localhost:3000/stage/release/${number}`,{state:true})
@@ -74,7 +76,7 @@ server.post("/serialport/cnn", async (req, res) => {
     
   })
   const str = 'hello'
-  cnn.write(stringToHex(str))
+  cnn.write(str)
 
   // return res.send({data:[],success:true})
 
@@ -93,12 +95,38 @@ function stringToHex(str){
   　　　　 return val;
 }
 
+function HexTostring(hexCharCodeStr){
+
+    　　var trimedStr = hexCharCodeStr.trim();
+    　　var rawStr =
+    　　trimedStr.substr(0,2).toLowerCase() === "0x"
+    　　?
+    　　trimedStr.substr(2)
+    　　:
+    　　trimedStr;
+    　　var len = rawStr.length;
+    　　if(len % 2 !== 0) {
+    　　　　alert("Illegal Format ASCII Code!");
+    　　　　return "";
+    　　}
+    　　var curCharCode;
+    　　var resultStr = [];
+    　　for(var i = 0; i < len;i = i + 2) {
+    　　　　curCharCode = parseInt(rawStr.substr(i, 2), 16); // ASCII Code Value
+    　　　　resultStr.push(String.fromCharCode(curCharCode));
+    　　}
+    　　return resultStr.join("");
+}
+
 // 发送数据
 server.post("/serialport/send",async (req, res) => {
   const data = req.body.data
   console.log(req.body)
   if(cnn){
-    cnn.write(stringToHex(data))
+    // console.log('发送串口数据',data+endflag)
+    console.log('发送串口数据',data+HexTostring(endflag))
+    // cnn.write(stringToHex(data))
+    cnn.write(data+HexTostring(endflag))
     res.send({success:true})
   }else{
     res.send({error:'没有连接'})

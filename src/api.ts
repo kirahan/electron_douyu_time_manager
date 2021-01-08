@@ -28,7 +28,12 @@ const stage4file = path.join(obspath, "/上麦4.txt");
 const adapter = new FileSync(path.join(datapath, "/db.json"));
 const db = low(adapter);
 
-let stageloop;
+let stageloop = {
+  stage1:null,
+  stage2:null,
+  stage3:null,
+  stage4:null
+};
 
 db.defaults({
   gift: [],
@@ -325,21 +330,23 @@ server.post("/sign", async (req, res) => {
 });
 
 server.post("/catchgift", async (req, res) => {
+  console.log('获取礼物')
   const id = req.body.id;
   const gfid = req.body.gfid;
   const giftdata = await db
     .get("gift")
     .find({ id: gfid })
     .value();
-  const gfname = giftdata.name;
-  const gfscore = Number(giftdata.score);
+ 
   const user = await db
     .get("user")
     .find({ id })
     .value();
-  const oldscore = Number(user.score);
-
+  
   if (giftdata && giftdata.enable) {
+    const oldscore = Number(user.score);
+    const gfname = giftdata.name;
+    const gfscore = Number(giftdata.score);
     const newscore = oldscore + gfscore;
     const addscore = await db
       .get("user")
@@ -362,7 +369,12 @@ server.post("/stage/onstage", async (req, res) => {
   const { id, stagename } = req.body;
   const stage = await db.get(stagename).value();
   if (stage.state == "idle") {
-    await change2onstage({ id, stagename });
+    const alowonstage =  await checkuseralreadonstage(stagename, id)
+    console.log('可以上麦',alowonstage)
+    if(alowonstage){
+      await change2onstage({ id, stagename });
+    }
+    
     res.send({success:true});
   }else{
     res.send({error:'not idel state'})
@@ -405,7 +417,7 @@ server.post("/stage/catch", async (req, res) => {
         .find({ id })
         .assign({ score: newscore })
         .value();
-      clearInterval(stageloop);
+      clearInterval(stageloop[stagename]);
       // do catch
       if (newscore > minscore) {
         await db
@@ -435,6 +447,17 @@ server.post("/stage/release/:stageindex", async (req, res) => {
   const stage = await db.get(stagename).value();
   const { state, userid } = stage;
   console.log(fishstate,state,userid)
+  let filename
+  if(stagename == "stage1"){
+    filename = stage1file;
+  }else if(stagename == "stage2"){
+    filename = stage2file;
+  }else if(stagename == "stage3"){
+    filename = stage3file;
+  }else if(stagename == "stage4"){
+    filename = stage4file;
+  }
+
   if (state == "catching") {
     // 抓到鱼了
     if(fishstate){
@@ -446,9 +469,16 @@ server.post("/stage/release/:stageindex", async (req, res) => {
       .write();
       // 重写fishnumber
       await savecsvfile()
+      fs.writeFileSync(filename,'抓到鱼了');
+    }else{
+      fs.writeFileSync(filename,'抱歉没有抓到鱼');
     }
-    await change2onstage({ id: userid, stagename });
-    res.send({success:true});
+    setTimeout(async() =>{
+      await change2onstage({ id: userid, stagename });
+      res.send({success:true});
+    },2000)
+    
+    
   } else if (state == "catchingthen2idle") {
     // 抓到鱼了
     if(fishstate){
@@ -460,16 +490,22 @@ server.post("/stage/release/:stageindex", async (req, res) => {
       .write();
       // 重写fishnumber
       await savecsvfile()
+      fs.writeFileSync(filename,'抓到鱼了');
+    }else{
+      fs.writeFileSync(filename,'抱歉没有抓到鱼');
     }
-    // 修改状态
+    setTimeout(async() =>{
+      // 修改状态
     await db
-      .get(stagename)
-      .assign({ state: "idle" })
-      .write();
-      await savecsvfile()    
-      await initfile(stagename);
+    .get(stagename)
+    .assign({ state: "idle" }).assign({userid:""})
+    .write();
+    await savecsvfile()    
+    await initfile(stagename);
 
-    res.send({success:true});
+  res.send({success:true});
+    },2000)
+    
   }else{
     res.send({error:'unknow state'});
   }
@@ -496,7 +532,7 @@ server.post("/stage/offstage", async (req, res) => {
   if (stagename) {
     const stage = await db.get(stagename).value();
     if (stage.state == "onstage") {
-      clearInterval(stageloop);
+      clearInterval(stageloop[stagename]);
       await db
         .get(stagename)
         .assign({ state: "idle", userid: "" })
@@ -590,14 +626,16 @@ async function change2onstage(data) {
     filename = stage4file;
   }
 
-  if (userscore > minscore) {
+  // 积分足够
+  if (userscore >= minscore) {
+    
     await db
       .get(stagename)
       .assign({ state: "onstage", userid: id })
       .write();
     talktohw('onstage', stagename);
     let counter_start = Date.now();
-    stageloop = setInterval(async () => {
+    stageloop[stagename] = setInterval(async () => {
       const now = Date.now() - counter_start;
       if (now < stageperiod * 1000) {
         fs.writeFileSync(filename, "");
@@ -610,7 +648,7 @@ async function change2onstage(data) {
         });
         fs.appendFileSync(filename, filedata);
       } else {
-        clearInterval(stageloop);
+        clearInterval(stageloop[stagename]);
         await db
           .get(stagename)
           .assign({ state: "idle", userid: "" })
@@ -626,6 +664,38 @@ async function change2onstage(data) {
     }, 3000);
   }
 }
+
+// 处理临时换台的情况
+async function checkuseralreadonstage(stagename,userid){
+  const stagestatelist = {}
+  stagestatelist['stage1'] = db.get('stage1').value()
+  stagestatelist['stage2'] = db.get('stage2').value()
+  stagestatelist['stage3'] = db.get('stage3').value()
+  stagestatelist['stage4'] = db.get('stage4').value()
+  for(let index in stagestatelist){
+    // 只判断其他三个
+    if(index != stagename){
+      // 一个账号多次登录,自动下线前面一个
+      if(stagestatelist[index].state=='onstage' && stagestatelist[index].userid==userid){
+        const offstageurl = 'http://localhost:3000/stage/offstage'
+        await axios.post(offstageurl,{id:userid}).catch(err => {
+          console.log('error')
+        })
+        return true
+        // stage/offstage
+      }else if(stagestatelist[index].state!='onstage' && stagestatelist[index].userid==userid){
+        return false
+      }
+    }
+    // console.log(index)
+    // const stagestate = stagestatelist[index]
+    // if(stagestate.userid == userid){
+    //   const stage = await db.get(stagename).value(); 
+    // }
+  }
+  return true
+}
+
 
 function initfile(stagename, data?: {}) {
   let filename
