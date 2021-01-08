@@ -4,6 +4,7 @@ import { ipcMain } from 'electron'
 const danmu = ()=>{
    
     let roomcnn =  null
+    let roomiscnn = false
     let roomid = null
     let danmuchannel = null
 
@@ -19,15 +20,12 @@ const danmu = ()=>{
     ipcMain.on('danmu-command-dmiscnn', (event, arg) => {
         
         let dmiscnn = false
-        if(roomcnn){
+        if(roomiscnn){
             dmiscnn = true
         }
         console.log('[dmiscnn]',dmiscnn)
-        if(dmiscnn){
-            event.reply('server-tell-client-dmiscnn',{dmiscnn,roomid})
-        }else{
-            event.reply('server-tell-client-dmiscnn',{dmiscnn,roomid})
-        }
+        event.reply('server-tell-client-dmiscnn',{dmiscnn,roomid})
+        
     })
 
 
@@ -43,6 +41,8 @@ const danmu = ()=>{
             console.log("[connect] roomId=%s", roomid);
             if(danmuchannel){   
                 danmuchannel.reply('room-event', 'connect')
+                roomiscnn = true
+                danmuchannel.reply('server-tell-client-dmiscnn', {dmiscnn: roomiscnn, roomid})
             }else{
                 console.log('danmuchannel未连接')
             }
@@ -51,6 +51,8 @@ const danmu = ()=>{
             console.log("[disconnect] roomId=%s", roomid);
             if(danmuchannel){   
                 danmuchannel.reply('room-event', 'disconnect')
+                roomiscnn = false
+                danmuchannel.reply('server-tell-client-dmiscnn', {dmiscnn: roomiscnn, roomid})
                 danmuchannel = null
                 roomcnn =  null
                 roomid = null
@@ -99,6 +101,7 @@ const danmu = ()=>{
         console.log('[close command]')
         roomcnn.logout()
         roomcnn =  null
+        roomiscnn = false
         roomid = null
     })
 

@@ -36,6 +36,7 @@
               </div>
               <v-col cols="12" class="eventlog rounded-lg">
                 <div v-for="event in eventlist" :key="event.message+Math.random()">
+                  <span class="pr-3" style="color:grey">{{event.timestamp}}</span>
                   <span class="pr-3" style="color:red">[{{event.type}}]</span>
                   <span color="blue" class="pr-3" style="color:#4FC1E9">{{event.name}}</span>
                   <span color="green" class="">:{{event.message}}</span>
@@ -111,6 +112,10 @@ export default class DanMu extends Vue {
     dmautorecnn: false
   }
 
+  discnnbtnpressed = false
+
+  autorunlooptasks = null
+
   async getdanmucommands(){
     const  res = await this.$http.get('/command')
     for(let index in res.data){
@@ -139,14 +144,16 @@ export default class DanMu extends Vue {
   async cnndanmu() {
     window.ipcRenderer.send("danmu-client-init", 'ping');
     this.getdanmuinfo()
-    // 已经连接
+    // 没有输入房间号
     if(!this.roomid){
+      console.log('没有输入房间号')
       return false
     }else if(!this.dmiscnn){
-          window.ipcRenderer.send("danmu-command-cnn",this.roomid);
+        this.discnnbtnpressed = false
+        await  window.ipcRenderer.send("danmu-command-cnn",this.roomid);
     }
     // 刷新状态
-  this.getdanmuinfo()
+  // await this.getdanmuinfo()
   
   }
 
@@ -156,8 +163,9 @@ export default class DanMu extends Vue {
     if(!this.dmiscnn){
       return false
     }else{
-        this.dmiscnn = false
-       window.ipcRenderer.send("danmu-command-close");
+      this.dmiscnn = false
+      this.discnnbtnpressed = true
+      window.ipcRenderer.send("danmu-command-close");
     }
     // 刷新状态
     this.getdanmuinfo()
@@ -206,6 +214,12 @@ export default class DanMu extends Vue {
         endflag:this.serialportconfig.endflag
       }
       this.spcnn = await this.$http.post('/serialport/cnn',config)
+      this.eventlist.push({
+        timestamp:this.formatDate(Date.now()),
+            type:'串口',
+            name:`连接`,
+            message:`${this.serialport}连接成功`
+          })
     }
     // 刷新状态
     this.getspcnninfo()
@@ -218,6 +232,12 @@ export default class DanMu extends Vue {
       return false
     }else{
       this.spcnn = await this.$http.get('/serialport/close')
+      this.eventlist.push({
+        timestamp:this.formatDate(Date.now()),
+            type:'串口',
+            name:`连接`,
+            message:`断开串口`
+          })
     }
     // 刷新状态
     this.getspcnninfo()
@@ -255,25 +275,44 @@ export default class DanMu extends Vue {
     window.ipcRenderer.on("room-event",(event, arg) => {
       if(arg=='connect'){
           console.log('connect')
-          this.eventlist.push({
-            type:'直播间',
-            name:'连接',
-            message:'房间连接成功'
-          })
-      }else if(arg=='err'){
-          console.log('err')
-          this.eventlist.push({
-            type:'直播间',
-            name:'连接',
-            message:'直播间异常'
-          })
-      }else if(arg=='disconnect'){
-          console.log('disconnect')
-          this.eventlist.push({
+           this.pushArrayByMaxLength(this.eventlist,{
+                 timestamp:this.formatDate(Date.now()),
             type:'直播间',
             name:'连接',
             message:'断开连接'
-          })
+                })
+          if(this.autorunlooptasks){
+            clearInterval(this.autorunlooptasks)
+          }
+      }else if(arg=='err'){
+          console.log('err')
+          // 异常提醒
+          // this.eventlist.push({
+          //   timestamp:this.formatDate(Date.now()),
+          //   type:'直播间',
+          //   name:'连接',
+          //   message:'直播间异常'
+          // })
+      }else if(arg=='disconnect'){
+          console.log('disconnect')
+          this.pushArrayByMaxLength(this.eventlist,{
+                 timestamp:this.formatDate(Date.now()),
+            type:'直播间',
+            name:'连接',
+            message:'断开连接'
+                })
+          // 当开启自动重连的时候  且是异常情况导致的掉线   且没有定时任务的时候开启定时重连
+          if(this.roomconfig.dmautorecnn && !this.discnnbtnpressed && !this.autorunlooptasks){
+             
+             this.autorunlooptasks =  setInterval(()=>{
+                this.cnndanmu()
+                this.pushArrayByMaxLength(this.eventlist,{
+                  type:'指令消息',
+                  message:`${this.roomconfig.cnnstep}分钟后将进行重连`,
+                })
+                console.log('auto cnn')
+              },this.roomconfig.cnnstep*10000)
+          }
       }
     })
 
@@ -371,7 +410,8 @@ export default class DanMu extends Vue {
             const hits = res.hits
             console.log(username,gfid,gfcnt,hits);
             console.log(res)
-            this.danmugfs.push(res)
+            // this.danmugfs.push(res)
+            this.pushArrayByMaxLength(this.danmugfs,res)
             const user = await this.$http.get(`/userbyusername/${res.nn}`)
             if(user.data){
               const id = user.data.id
@@ -382,6 +422,30 @@ export default class DanMu extends Vue {
     
 
   }
+
+formatDate(datetime) {
+    var date = new Date(datetime);
+    var year = date.getFullYear(),
+        month = ("0" + (date.getMonth() + 1)).slice(-2),
+        sdate = ("0" + date.getDate()).slice(-2),
+        hour = ("0" + date.getHours()).slice(-2),
+        minute = ("0" + date.getMinutes()).slice(-2),
+        second = ("0" + date.getSeconds()).slice(-2);
+    // 拼接
+    var result = year + "-"+ month +"-"+ sdate +" "+ hour +":"+ minute +":" + second;
+    // 返回
+    return result;
+}
+
+pushArrayByMaxLength(array:{}[],data:{},maxlength?:number){
+  maxlength = maxlength || 30
+  if(array.length>maxlength){
+                  array.splice(0,1)
+                  array.push(data)
+      }else{
+        array.push(data)
+  }
+}
 
 
 async checksubmitorregistration(arg){
@@ -403,11 +467,18 @@ async checksubmitorregistration(arg){
 }
 
   created(){
+
+    // 在ipc中初始化弹幕事件
     this.init()
+    // 获取配置参数
     this.getconfig()
+    // 获取命令
     this.getdanmucommands();
+    // 获取可连接的串口列表
     this.getserialports()
+    // 获取串口连接状态
     this.getspcnninfo()
+    // 获取弹幕连接状态
     this.getdanmuinfo()
   }
 }
@@ -443,6 +514,7 @@ async checksubmitorregistration(arg){
   justify-content:flex-end;
 }
 .eventlog{
+  font-size: 12px;
   background-color: #1d2935;
   display: flex;
   flex-direction:column;
