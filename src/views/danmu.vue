@@ -279,7 +279,7 @@ export default class DanMu extends Vue {
                  timestamp:this.formatDate(Date.now()),
             type:'直播间',
             name:'连接',
-            message:'断开连接'
+            message:'连接成功 '
                 })
           if(this.autorunlooptasks){
             clearInterval(this.autorunlooptasks)
