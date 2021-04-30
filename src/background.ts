@@ -20,7 +20,8 @@ async function createWindow() {
 			// See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
 			nodeIntegration: (process.env
 				.ELECTRON_NODE_INTEGRATION as unknown) as boolean,
-          
+				contextIsolation: false //electron V12 默认的时候禁止了node在render进程中运行，所以会报错require is not defined 
+				// 把这个设置成false即可解决（https://github.com/electron/electron/releases/tag/v12.0.0 are the release notes; and https://www.electronjs.org/docs/tutorial/context-isolation is the explain why change this）
 		},
 	});
 
