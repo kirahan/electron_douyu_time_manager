@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 210">
+    <defs>
+        <style>
+            .a {
+                fill: #5c9191;
+            }
+
+            .b {
+                fill: none;
+                stroke: #000;
+                stroke-miterlimit: 10;
+            }
+
+            .b,
+            .d {
+                opacity: 0.5;
+            }
+
+            .c {
+                opacity: 0.3;
+            }
+        </style>
+    </defs>
+    <rect class="a" x="17.53" y="14" width="144.94" height="182" rx="11.39" />
+    <rect class="b" x="17.53" y="14" width="144.94" height="182" rx="11.39" />
+    <rect class="c" x="24.54" y="80.63" width="130.93" height="40" rx="3.33" />
+    <rect class="d" x="24.67" y="37.3" width="130.65" height="38.22" rx="2.72" />
+    <rect class="c" x="24.54" y="124.19" width="130.93" height="40" rx="3.33" />
+</svg>

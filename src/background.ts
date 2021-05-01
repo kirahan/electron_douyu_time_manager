@@ -22,9 +22,9 @@ if(!fs.pathExistsSync(obspath)){
 
 const db = require('./api').db
 const server = require('./api').server
-// 挂载串口
-import serialport from './serialport'
-const sp  = serialport(server,db)
+
+
+
 
 // 挂载弹幕
 import danmu from './danmu'
@@ -127,8 +127,8 @@ async function createWindow() {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       preload: path.join(debugpath, 'preload.js'),
-      nodeIntegration: (process.env
-          .ELECTRON_NODE_INTEGRATION as unknown) as boolean
+      nodeIntegration: true,
+      contextIsolation:false
     }
   })
 

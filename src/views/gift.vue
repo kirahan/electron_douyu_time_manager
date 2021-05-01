@@ -5,7 +5,7 @@
         <v-col cols="12">
           <v-sheet elevation-10 class="rounded-lg pa-3 pannel h100">
             <div class="text-md-h6 d-inline-block mr-3">
-              斗鱼礼物列表和积分规则
+              斗鱼礼物列表和时长规则
             </div>
             <v-btn color="#70CCA2" dark elevation="2" @click="addgift"
               >新增</v-btn
@@ -22,7 +22,12 @@
                 dense
                 @click:row="filldata"
               >
-                <template v-slot:item.enable="{ item }">
+              <!-- 显示图片 -->
+              <template v-slot:item.icon="{ item }">
+                 <v-img :src="item.url" contain max-height="48" max-width="48"></v-img>
+              </template>
+              <!-- 状态按钮 -->
+              <template v-slot:item.enable="{ item }">
                   <v-chip
                     class="ma-2"
                     :color="item.enable ? 'green' : 'grey'"
@@ -45,24 +50,35 @@
               <v-card-text>
                 <v-container>
                   <v-row>
+                    <v-autocomplete
+                      v-model="giftvalue"
+                      :items="douyugiftlist"
+                      item-text="name"
+                      item-value=""
+                      label="礼物列表[价值|名称|ID|图标]"
+                      @change="updategiftformdata"
+                    >
+                      <template v-slot:item="{ item }">
+                        <v-list-item-avatar
+                          color="indigo"
+                          class="subtitle-2 font-weight-light white--text"
+                        >
+                          {{item.price/100}}
+                        </v-list-item-avatar>
+                        <v-list-item-content>
+                          <v-list-item-title v-text="item.name + ' | ' + item.id"></v-list-item-title>
+                          
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-img :src="item.url" contain max-height="48" max-width="48"></v-img>
+                        </v-list-item-action>
+                      </template>
+                    
+                    </v-autocomplete>
                     <v-col cols="12">
                       <v-text-field
-                        label="ID*"
-                        v-model="giftdata.id"
-                        required
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-text-field
-                        label="昵称*"
-                        v-model="giftdata.name"
-                        required
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-text-field
-                        label="积分*"
-                        v-model="giftdata.score"
+                        label="时长*[分钟,可以是负数]"
+                        v-model="giftdata.timevalue"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12">
@@ -102,7 +118,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 
 @Component({
   components: {},
@@ -111,21 +127,37 @@ export default class Gift extends Vue {
   constructor() {
     super();
   }
+  giftvalue={}
+  douyugiftlist=[];
   dialog = false;
   giftupdate = false;
   giftdata = {
     id: "",
     name: "",
-    score: "",
+    url: "",
+    timevalue: "",
     enable: true,
   };
   headers = [
     { text: "礼物ID", align: "start", value: "id" },
     { text: "礼物名称", value: "name" },
-    { text: "兑换积分数", value: "score" },
+    { text: "时长增/减[分钟]", value: "score" },
+    { text: "图标", value: "icon" , align: "center"},
     { text: "启用", value: "enable", align: "center" },
   ];
   desserts = [];
+
+
+// 无法获取到真个数组数据只能获得name字段，所以不能用watch实现
+  // @Watch('giftvalue')
+  // onGiftValueChange(newval,oldval){
+  //   console.log('giftvalue change',newval,oldval);
+  //   this.giftdata.id = newval.id
+  //   this.giftdata.name = newval.name
+  //   this.giftdata.url = newval.url
+
+  // }
+
 
   addgift() {
     this.dialog = true;
@@ -133,9 +165,19 @@ export default class Gift extends Vue {
     this.giftdata = {
       id: "",
       name: "",
-      score: "",
+      url: "",
+      timevalue: "",
       enable: true,
     };
+  }
+
+  updategiftformdata(data,newd){
+    console.log(data,newd)
+  }
+
+  async getalldouyugiftlsit(){
+    const giftlist = await this.$http.get("/douyugiftlist");
+    this.douyugiftlist = giftlist.data;
   }
 
   async addgiftdata() {
@@ -178,7 +220,10 @@ export default class Gift extends Vue {
 
   created() {
     this.getgiftdata();
+    this.getalldouyugiftlsit();
   }
+
+
 }
 </script>
 

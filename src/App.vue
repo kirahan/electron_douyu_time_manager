@@ -28,11 +28,6 @@ export default class App extends Vue {
   }
   tab=0;
   tablist = [
-    // {
-    //   name: "",
-    //   text: "简介",
-    //   link: "/"
-    // },
     {
       name: "",
       text: "弹幕",
@@ -50,21 +45,11 @@ export default class App extends Vue {
       text: "用户",
       link: "/user"
     },
-    // {
-    //   name: "",
-    //   text: "硬件",
-    //   link: "/hw"
-    // },
     {
       name: "",
       text: "设置",
       link: "/setting"
-    },
-    // {
-    //   name: "",
-    //   text: "OBS",
-    //   link: "/obs"
-    // }
+    }
   ]
 
 

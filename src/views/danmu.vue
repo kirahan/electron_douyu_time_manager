@@ -18,22 +18,11 @@
                 <v-btn :color="formconfig.danmu.closecolor" dark elevation="2" @click="closedanmu"
                   >{{formconfig.danmu.btnclosetitle}}</v-btn
                 >
+                <v-switch v-model="showdanmu" color="error" :label="showdanmu?'关闭弹幕':'显示弹幕'"></v-switch>
+            
+
               </div>
 
-              <div class="obscheckboxpannel">
-                  <v-select
-                              :items="serialportlist"
-                              v-model="serialport"
-                              dense
-                              solo
-                  ></v-select>
-                <v-btn :color="formconfig.serialport.cnncolor" dark elevation="2" @click="cnnserial"
-                  >{{formconfig.serialport.btncnntitle}}</v-btn
-                >
-                <v-btn :color="formconfig.serialport.closecolor" dark elevation="2" @click="closeserial"
-                  >{{formconfig.serialport.btnclosetitle}}</v-btn
-                >
-              </div>
               <v-col cols="12" class="eventlog rounded-lg">
                 <div v-for="event in eventlist" :key="event.message+Math.random()">
                   <span class="pr-3" style="color:grey">{{event.timestamp}}</span>
@@ -44,10 +33,13 @@
             </v-col>
             </v-col>
             <v-col cols="8" class="danmu rounded-lg">
-                <div v-for="msg in danmumsgs" :key="msg.now">
+                <div v-if="showdanmu">
+                  <div v-for="msg in danmumsgs" :key="msg.now">
                   <span class="pr-3" style="color:green">[Lv{{msg.level}}]</span>
                   <span color="blue" class="pr-3" style="color:#4FC1E9">{{msg.nn}}</span>
                   <span color="white" class="">{{msg.txt}}</span>
+                  </div>
+                  
                 </div>
                 <div v-for="gf in danmugfs" :key="gf.now">
                   <span class="pr-3" style="color:red">[礼物]</span>
@@ -82,28 +74,19 @@ export default class DanMu extends Vue {
   // 礼物消息
   danmugfs = []
   danmucommands = []
-  serialportconfig:any = {}
-  serialportlist = []
-  serialport = ''
 
+  showdanmu = false
   formconfig = {
     danmu : {
       cnncolor :'#007ACC',
       closecolor : '',
       btncnntitle : '连接',
       btnclosetitle : '关闭',
-    },
-    serialport : {
-      cnncolor :'#007ACC',
-      closecolor : '',
-      btncnntitle : '连接',
-      btnclosetitle : '关闭',
-    },
+      
+    }
   }
 
-  spcnn = null
   dmcnn = null
-  spiscnn = null
   dmiscnn = false
   
   roomconfig = {
@@ -127,14 +110,12 @@ export default class DanMu extends Vue {
   async getconfig(){
     const config = await this.$http.get("/config");
     // set signconfig
-    this.roomconfig.defaultroomid = config.data.signconfig.defaultroomid;
-    this.roomconfig.cnnstep = config.data.signconfig.cnnstep;
-    this.roomconfig.dmautorecnn = config.data.signconfig.dmautorecnn;
+    this.roomconfig.defaultroomid = config.data.roomconfig.defaultroomid;
+    this.roomconfig.cnnstep = config.data.roomconfig.cnnstep;
+    this.roomconfig.dmautorecnn = config.data.roomconfig.dmautorecnn;
     this.roomid = this.roomconfig.defaultroomid || ''
     console.log(this.roomconfig)
   }
-
-
 
   async getdanmuinfo(){
     window.ipcRenderer.send("danmu-command-dmiscnn");
@@ -171,84 +152,11 @@ export default class DanMu extends Vue {
     this.getdanmuinfo()
   }
 
-  async getserialports() {
-    const splist = await await this.$http.get("/serialport");
-    const portconfig = await await this.$http.get("/serialport/configport");
-    const ports = [];
-    if (splist.data.data) {
-      for (let port of splist.data.data) {
-        ports.push(port.path);
-      }
-    }
-    // this.serialport = portconfig.data.hwserialport;
-    this.serialportlist = ports;
-    this.serialportconfig = portconfig.data
-  }
 
-  async getspcnninfo(){
-    this.spiscnn = (await this.$http.get('/serialport/iscnn')).data
-    if(this.spiscnn.isOpen){
-      this.formconfig.serialport.cnncolor = '#33D76C'
-      this.formconfig.serialport.closecolor = '#CE3843'
-      this.formconfig.serialport.btncnntitle = '已连接'
-      this.formconfig.serialport.btnclosetitle = '关闭'
-      this.serialport = this.spiscnn.path;
-    }else{
-      this.formconfig.serialport.cnncolor = '#007ACC'
-      this.formconfig.serialport.closecolor = ''
-      this.formconfig.serialport.btncnntitle = '连接'
-      this.formconfig.serialport.btnclosetitle = '-'
-    }
-    return true
-  }
-
-  async cnnserial(){
-    this.getspcnninfo()
-    // 已经连接
-    if(this.spiscnn.isOpen){
-      return false
-    }else{
-      const config = {
-        port:this.serialport,
-        baudrate:this.serialportconfig.hwbaudrate,
-        endflag:this.serialportconfig.endflag
-      }
-      this.spcnn = await this.$http.post('/serialport/cnn',config)
-      this.eventlist.push({
-        timestamp:this.formatDate(Date.now()),
-            type:'串口',
-            name:`连接`,
-            message:`${this.serialport}连接成功`
-          })
-    }
-    // 刷新状态
-    this.getspcnninfo()
-  }
-
-  async closeserial(){
-    this.getspcnninfo()
-    // 已经连接
-    if(!this.spiscnn.isOpen){
-      return false
-    }else{
-      this.spcnn = await this.$http.get('/serialport/close')
-      this.eventlist.push({
-        timestamp:this.formatDate(Date.now()),
-            type:'串口',
-            name:`连接`,
-            message:`断开串口`
-          })
-    }
-    // 刷新状态
-    this.getspcnninfo()
-  }
   async  init(){
     window.ipcRenderer.removeAllListeners("danmu-gift")
     window.ipcRenderer.removeAllListeners("danmu-msg")
-    // console.log('try to  remove gift')
-    // window.ipcRenderer.removeListener("danmu-gift",() =>{
-    //   console.log('remove gift')
-    // })
+
     window.ipcRenderer.send("danmu-client-init", 'ping');
 
     window.ipcRenderer.on("server-tell-client-dmiscnn",(event, {dmiscnn,roomid}) => {
@@ -317,7 +225,8 @@ export default class DanMu extends Vue {
     })
 
     window.ipcRenderer.on("danmu-msg",async(event, arg) => {
-      if(this.danmumsgs.length>20){
+      if(this.showdanmu){
+if(this.danmumsgs.length>20){
                   this.danmumsgs.splice(0,1)
                   this.danmumsgs.push(arg)
       }else{
@@ -325,20 +234,20 @@ export default class DanMu extends Vue {
       }
       const getcommand = this.danmucommands.indexOf(arg.txt)
       if(getcommand!=-1){
-        // getcommand=0 查询
-        // getcommand=1 签到
-        // getcommand=2 上1
-        // getcommand=3 上2
-        // getcommand=4 上3
-        // getcommand=5 上4
-        // getcommand=6 抓鱼
-        // getcommand=7 下麦
-        // getcommand=8 喂鱼
+    
+        // getcommand=1 注册
+        // getcommand=2 
+        // getcommand=3 
+        // getcommand=4 
+        // getcommand=5 
+        // getcommand=6 
+        // getcommand=7 
+        // getcommand=8 
         await this.checksubmitorregistration(arg)
         if(getcommand == 0){
           const user = await this.$http.get(`/userbyusername/${arg.nn}`)
           if(user.data){
-                        const check = await this.$http.post('/check',{id:user.data.id})
+            const check = await this.$http.post('/check',{id:user.data.id})
           }
           
         }else if(getcommand == 1){
@@ -364,42 +273,12 @@ export default class DanMu extends Vue {
             const stagename = 'stage2'
             const onstage = await this.$http.post(`/stage/onstage/`,{id,stagename}) 
           }
-        }else if(getcommand == 4){
-          const user = await this.$http.get(`/userbyusername/${arg.nn}`)
-          if(user.data){
-            const id = user.data.id
-            const stagename = 'stage3'
-            const onstage = await this.$http.post(`/stage/onstage/`,{id,stagename}) 
-          }
-        }else if(getcommand == 5){
-          const user = await this.$http.get(`/userbyusername/${arg.nn}`)
-          if(user.data){
-            const id = user.data.id
-            const stagename = 'stage4'
-            const onstage = await this.$http.post(`/stage/onstage/`,{id,stagename}) 
-          }
-        }else if(getcommand == 6){
-          const user = await this.$http.get(`/userbyusername/${arg.nn}`)
-          if(user.data){
-            const id = user.data.id
-            const arg = await this.$http.post('/stage/catch',{id}) 
-          }
-        }else if(getcommand == 7){
-          const user = await this.$http.get(`/userbyusername/${arg.nn}`)
-          if(user.data){
-            const id = user.data.id
-            const arg = await this.$http.post('/stage/offstage',{id}) 
-          }
-        }else if(getcommand == 8){
-          const user = await this.$http.get(`/userbyusername/${arg.nn}`)
-          if(user.data){
-            const id = user.data.id
-            const res = await this.$http.post(`/feedfish/`,{id}) 
-          }
         }else{
 
         }
       }
+      }
+      
     })
 
     window.ipcRenderer.on("danmu-gift",async (event, res) => {
@@ -447,7 +326,6 @@ pushArrayByMaxLength(array:{}[],data:{},maxlength?:number){
   }
 }
 
-
 async checksubmitorregistration(arg){
    console.log('检查用户是否存在')
    const user = await this.$http.get(`/userbyusername/${arg.nn}`)
@@ -474,10 +352,6 @@ async checksubmitorregistration(arg){
     this.getconfig()
     // 获取命令
     this.getdanmucommands();
-    // 获取可连接的串口列表
-    this.getserialports()
-    // 获取串口连接状态
-    this.getspcnninfo()
     // 获取弹幕连接状态
     this.getdanmuinfo()
   }

@@ -71,7 +71,7 @@ const danmu = ()=>{
 
           //消息事件
           roomcnn.on("chatmsg", async(res)=>{
-            console.log("[chatmsg]", `<lv ${res.level}> [${res.nn}] ${res.txt}`);
+            //console.log("[chatmsg]", `<lv ${res.level}> [${res.nn}] ${res.txt}`);
             if(danmuchannel){   
                 danmuchannel.reply('danmu-msg', res)
             }else{
@@ -92,6 +92,63 @@ const danmu = ()=>{
             console.log("[loginres]", "登录成功");
           });
 
+          roomcnn.on("uenter", function(res) {
+            console.log("[uenter]", res);
+          });
+
+          roomcnn.on("upgrade", function(res) {
+            console.log("[upgrade]", "");
+          });
+
+          roomcnn.on("rss", function(res) {
+            console.log("[rss]", "");
+          });
+
+          roomcnn.on("bc_buy_deserve", function(res) {
+            console.log("[bc_buy_deserve]", "");
+          });
+
+          roomcnn.on("ssd", function(res) {
+            console.log("[ssd]", res);
+          });
+
+          roomcnn.on("spbc", function(res) {
+            console.log("[spbc]", res);
+          });
+          roomcnn.on("onlinegift", function(res) {
+            console.log("[onlinegift]", res);
+          });
+          roomcnn.on("ggbb", function(res) {
+            console.log("[ggbb]", res);
+          });
+          roomcnn.on("rri", function(res) {
+            console.log("[rri]", res);
+          });
+          roomcnn.on("synexp", function(res) {
+            console.log("[synexp]", res);
+          });
+          roomcnn.on("gbroadcast", function(res) {
+            console.log("[]", res);
+          });
+          roomcnn.on("qausrespond", function(res) {
+            console.log("[qausrespond]", res);
+          });
+          roomcnn.on("wiru", function(res) {
+            console.log("[wiru]", res);
+          });
+          roomcnn.on("wirt", function(res) {
+            console.log("[wirt]", res);
+          });
+          roomcnn.on("mcspeacsite", function(res) {
+            console.log("[mcspeacsite]", res);
+          });
+          roomcnn.on("srres", function(res) {
+            console.log("[srres]", res);
+          });
+          roomcnn.on("frank", function(res) {
+            console.log("[frank]", res);
+          });
+          
           //开始监听
           roomcnn.run();
     })

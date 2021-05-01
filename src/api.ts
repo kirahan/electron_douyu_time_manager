@@ -13,42 +13,38 @@ server.use(require("cors")());
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const debugpath = isDevelopment ? __dirname :process.cwd()
 
-const obspath = path.join(debugpath, "/obstemplate");
 const datapath = path.join(debugpath, "/data");
 
-const fishfile = path.join(datapath,"/鱼头记录.csv")
-const helpfile = path.join(obspath, "/帮助.txt");
-const signfile = path.join(obspath, "/签到.txt");
-const giftfile = path.join(obspath, "/礼物.txt");
-const stage1file = path.join(obspath, "/上麦1.txt");
-const stage2file = path.join(obspath, "/上麦2.txt");
-const stage3file = path.join(obspath, "/上麦3.txt");
-const stage4file = path.join(obspath, "/上麦4.txt");
+const timerfile = path.join(datapath,"/timer.txt")
 
+// 数据库
 const adapter = new FileSync(path.join(datapath, "/db.json"));
 const db = low(adapter);
 
-let stageloop = {
-  stage1:null,
-  stage2:null,
-  stage3:null,
-  stage4:null
-};
+// 斗鱼礼物数据库
+const douyu_adapter = new FileSync(path.join(datapath, "/gift.json"));
+const douyu_db = low(douyu_adapter);
 
 db.defaults({
   gift: [],
   user: [],
   command: [],
   config: {},
-  stage1:{},
-  stage2:{},
-  stage3:{},
-  stage4:{},
   defaultconfig: {},
+  danmu:{},
   version: "0.1.0",
 }).write();
 
 
+
+server.get("/douyugiftlist",(req,res)=>{
+  const giftlist = douyu_db.value();
+  let giftarray = []
+  for(let index in giftlist){
+    giftarray.push(giftlist[index])
+  }
+  res.send(giftarray);
+})
 
 
 // 读取gift
@@ -242,47 +238,8 @@ server.post("/config", async (req, res) => {
   res.send(config);
 });
 
-// 读取stage1
-server.get("/stage1", (req, res) => {
-  const state = db.get("stage1").value();
-  res.send(state);
-});
-// 编辑stage1
-server.post("/stage1", async (req, res) => {
-  const config = await db.set("state1", req.body).write();
-  res.send(config);
-});
-// 读取stage2
-server.get("/stage2", (req, res) => {
-  const state = db.get("stage2").value();
-  res.send(state);
-});
-// 编辑stage2
-server.post("/stage2", async (req, res) => {
-  const config = await db.set("state2", req.body).write();
-  res.send(config);
-});
-// 读取stage3
-server.get("/stage3", (req, res) => {
-  const state = db.get("stage3").value();
-  res.send(state);
-});
-// 编辑stage3
-server.post("/stage3", async (req, res) => {
-  const config = await db.set("state2", req.body).write();
-  res.send(config);
-});
-// 读取stage4
-server.get("/stage4", (req, res) => {
-  const state = db.get("stage4").value();
-  res.send(state);
-});
-// 编辑stage4
-server.post("/stage4", async (req, res) => {
-  const config = await db.set("state2", req.body).write();
-  res.send(config);
-});
 
+// 查询积分
 server.post("/check", async (req, res) => {
   const id = req.body.id;
   const user = await db
@@ -297,6 +254,7 @@ server.post("/check", async (req, res) => {
   res.send(user);
 });
 
+// 签到
 server.post("/sign", async (req, res) => {
   const id = req.body.id;
   const signtime = Number(req.body.now);
@@ -334,414 +292,17 @@ server.post("/sign", async (req, res) => {
   }
 });
 
-server.post("/catchgift", async (req, res) => {
-  console.log('获取礼物')
-  const id = req.body.id;
-  const gfid = req.body.gfid;
-  const giftdata = await db
-    .get("gift")
-    .find({ id: gfid })
-    .value();
- 
-  const user = await db
-    .get("user")
-    .find({ id })
-    .value();
-  
-  if (giftdata && giftdata.enable) {
-    const oldscore = Number(user.score);
-    const gfname = giftdata.name;
-    const gfscore = Number(giftdata.score);
-    const newscore = oldscore + gfscore;
-    const addscore = await db
-      .get("user")
-      .find({ id })
-      .assign({ score: newscore })
-      .write();
-    const filedata = `感谢${user.username}赠送的${gfname},获的${gfscore}积分,总积分${newscore}\r\n`;
-    fs.appendFile(giftfile, filedata, (err) => {
-      setTimeout(() => {
-        delefirstline(giftfile);
-      }, 3000);
-    });
-    res.send(addscore);
-  } else {
-    res.send({ error: "未知礼物" });
-  }
-});
-
-server.post("/stage/onstage", async (req, res) => {
-  const { id, stagename } = req.body;
-  const stage = await db.get(stagename).value();
-  if (stage.state == "idle") {
-    const alowonstage =  await checkuseralreadonstage(stagename, id)
-    console.log('可以上麦',alowonstage)
-    if(alowonstage){
-      await change2onstage({ id, stagename });
-    }
-    
-    res.send({success:true});
-  }else{
-    res.send({error:'not idel state'})
-  }
-});
-
-server.post("/stage/catch", async (req, res) => {
-  const { id } = req.body;
-  const stageconfig = await db.get("config.stageconfig").value();
-  const scorestep = await db.get("config.stageconfig.stagespendscore").value();
-  const minscore = Number(stageconfig.stageminscore);
-  const stage1id = await db.get("stage1.userid").value();
-  const stage2id = await db.get("stage2.userid").value();
-  const stage3id = await db.get("stage3.userid").value();
-  const stage4id = await db.get("stage4.userid").value();
-  let stagename = "";
-  if (stage1id == id) {
-    stagename = "stage1";
-  } else if (stage2id == id) {
-    stagename = "stage2";
-  } else if (stage3id == id) {
-    stagename = "stage3";
-  }else if (stage4id == id) {
-    stagename = "stage4";
-  }else {
-    stagename = "";
-  }
-
-  if (stagename) {
-    const stage = await db.get(stagename).value();
-    if (stage.state == "onstage") {
-      const user = await db
-        .get("user")
-        .find({ id })
-        .value();
-      const userscore = Number(user.score);
-      const newscore = userscore - scorestep;
-      const newuser = await db
-        .get("user")
-        .find({ id })
-        .assign({ score: newscore })
-        .value();
-      clearInterval(stageloop[stagename]);
-      // do catch
-      if (newscore > minscore) {
-        await db
-          .get(stagename)
-          .assign({ state: "catching" })
-          .write();
-      } else {
-        await db
-          .get(stagename)
-          .assign({ state: "catchingthen2idle" })
-          .write();
-      }
-      initfile(stagename, { username: user.username, score: newscore });
-      res.send({ success: true });
-      talktohw('catch', stagename);
-    }else{
-    res.send({ error: "unknown stage" });
-    }
-  }else{
-    res.send({ error: "unknown user" });
-  }
-});
-
-server.post("/stage/release/:stageindex", async (req, res) => {
-  const stagename  = 'stage' + req.params.stageindex;
-  const fishstate = req.body.state
-  const stage = await db.get(stagename).value();
-  const { state, userid } = stage;
-  console.log(fishstate,state,userid)
-  let filename
-  if(stagename == "stage1"){
-    filename = stage1file;
-  }else if(stagename == "stage2"){
-    filename = stage2file;
-  }else if(stagename == "stage3"){
-    filename = stage3file;
-  }else if(stagename == "stage4"){
-    filename = stage4file;
-  }
-
-  if (state == "catching") {
-    // 抓到鱼了
-    if(fishstate){
-      const  fishnumber = db.get("user").find({id:userid}).value().fishnumber + 1
-      await db
-      .get("user")
-      .find({id:userid})
-      .assign({fishnumber})
-      .write();
-      // 重写fishnumber
-      await savecsvfile()
-      fs.writeFileSync(filename,'抓到鱼了');
-    }else{
-      fs.writeFileSync(filename,'抱歉没有抓到鱼');
-    }
-    setTimeout(async() =>{
-      await change2onstage({ id: userid, stagename });
-      res.send({success:true});
-    },2000)
-    
-    
-  } else if (state == "catchingthen2idle") {
-    // 抓到鱼了
-    if(fishstate){
-      const  fishnumber = db.get("user").find({id:userid}).value().fishnumber + 1
-      await db
-      .get("user")
-      .find({id:userid})
-      .assign({fishnumber})
-      .write();
-      // 重写fishnumber
-      await savecsvfile()
-      fs.writeFileSync(filename,'抓到鱼了');
-    }else{
-      fs.writeFileSync(filename,'抱歉没有抓到鱼');
-    }
-    setTimeout(async() =>{
-      // 修改状态
-    await db
-    .get(stagename)
-    .assign({ state: "idle" }).assign({userid:""})
-    .write();
-    await savecsvfile()    
-    await initfile(stagename);
-
-  res.send({success:true});
-    },2000)
-    
-  }else{
-    res.send({error:'unknow state'});
-  }
-});
-
-server.post("/stage/offstage", async (req, res) => {
-  const { id } = req.body;
-  const stage1id = await db.get("stage1.userid").value();
-  const stage2id = await db.get("stage2.userid").value();
-  const stage3id = await db.get("stage3.userid").value();
-  const stage4id = await db.get("stage4.userid").value();
-  let stagename = "";
-  if (stage1id == id) {
-    stagename = "stage1";
-  } else if (stage2id == id) {
-    stagename = "stage2";
-  } else if (stage3id == id) {
-    stagename = "stage3";
-  }else if (stage4id == id) {
-    stagename = "stage4";
-  }else {
-    stagename = "";
-  }
-  if (stagename) {
-    const stage = await db.get(stagename).value();
-    if (stage.state == "onstage") {
-      clearInterval(stageloop[stagename]);
-      await db
-        .get(stagename)
-        .assign({ state: "idle", userid: "" })
-        .write();
-      initfile(stagename);
-      res.send({ success: "回到空闲状态" });
-      talktohw('offstage', stagename);
-    }else{
-    res.send({ error: "不在上麦状态" });
-
-    }
-  }else{
-  res.send({ error: "非上麦人消息" });
-
-  }
-});
-
-server.post('/stage/setidle', async (req, res) => {
-  await init();
-  res.send({success: true, message:'set all stage to idel state'})
-})
-
-
-// 投食
-server.post("/feedfish", async (req, res) => {
-  const id = req.body.id;
-  const user = await db
-    .get("user")
-    .find({ id })
-    .value();
-  const feedscore = Number(await db.get("config.stageconfig.feedscore").value());
-  const oldscore = Number(user.score);
-
-  if(user){
-    if(oldscore >= feedscore) {
-     const newscore = oldscore - feedscore;
-     const filedata = `[投食] ${user.username}消耗积分${feedscore},剩余积分${newscore}`;
-     const newuser = await db
-        .get("user")
-        .find({ id })
-        .assign({ score: newscore })
-        .value();
-     fs.appendFileSync(signfile, filedata);
-     setTimeout(() => {
-       delelastline(signfile);
-     }, 3000);
-     res.send({success: true,message:'投食'});
-     await talktohw('feedfish');
-    }else{
-      const filedata = `[投食]积分不足，需要消耗积分${feedscore},当前积分${oldscore}`;
-     fs.appendFileSync(signfile, filedata);
-     setTimeout(() => {
-       delelastline(signfile);
-     }, 3000);
-      res.send({error:"no enough score"})
-    }
-  }else{
-    res.send({error:"unknown user"})
-  }
- 
-  
-});
-
-
-
-
 
 server.listen(3000, () => {
   console.log("listening on 3000");
   init()
 });
 
-async function change2onstage(data) {
-  const { id, stagename } = data;
-  const stageconfig = await db.get("config.stageconfig").value();
-  const minscore = Number(stageconfig.stageminscore);
-  const stageperiod = Number(stageconfig.stageperiod);
-  const user = await db
-    .get("user")
-    .find({ id })
-    .value();
-  const userscore = Number(user.score);
-  let filename
-  if(stagename == "stage1"){
-    filename = stage1file;
-  }else if(stagename == "stage2"){
-    filename = stage2file;
-  }else if(stagename == "stage3"){
-    filename = stage3file;
-  }else if(stagename == "stage4"){
-    filename = stage4file;
-  }
-
-  // 积分足够
-  if (userscore >= minscore) {
-    
-    await db
-      .get(stagename)
-      .assign({ state: "onstage", userid: id })
-      .write();
-    talktohw('onstage', stagename);
-    let counter_start = Date.now();
-    stageloop[stagename] = setInterval(async () => {
-      const now = Date.now() - counter_start;
-      if (now < stageperiod * 1000) {
-        fs.writeFileSync(filename, "");
-        const filedata = stagetxttemplate({
-          stage: stagename.split("stage")[1],
-          state: "onstage",
-          username: user.username,
-          counter: Math.floor(stageperiod - now / 1000),
-          score: userscore,
-        });
-        fs.appendFileSync(filename, filedata);
-      } else {
-        clearInterval(stageloop[stagename]);
-        await db
-          .get(stagename)
-          .assign({ state: "idle", userid: "" })
-          .write();
-        initfile(stagename);
-      }
-    }, 500);
-  } else {
-    const errormessage = `积分不足，最低积分${minscore}，您只有${userscore}\r\n`;
-    fs.appendFileSync(filename, errormessage);
-    setTimeout(() => {
-      delelastline(filename);
-    }, 3000);
-  }
-}
-
-// 处理临时换台的情况
-async function checkuseralreadonstage(stagename,userid){
-  const stagestatelist = {}
-  stagestatelist['stage1'] = db.get('stage1').value()
-  stagestatelist['stage2'] = db.get('stage2').value()
-  stagestatelist['stage3'] = db.get('stage3').value()
-  stagestatelist['stage4'] = db.get('stage4').value()
-  for(let index in stagestatelist){
-    // 只判断其他三个
-    if(index != stagename){
-      // 一个账号多次登录,自动下线前面一个
-      if(stagestatelist[index].state=='onstage' && stagestatelist[index].userid==userid){
-        const offstageurl = 'http://localhost:3000/stage/offstage'
-        await axios.post(offstageurl,{id:userid}).catch(err => {
-          console.log('error')
-        })
-        return true
-        // stage/offstage
-      }else if(stagestatelist[index].state!='onstage' && stagestatelist[index].userid==userid){
-        return false
-      }
-    }
-    // console.log(index)
-    // const stagestate = stagestatelist[index]
-    // if(stagestate.userid == userid){
-    //   const stage = await db.get(stagename).value(); 
-    // }
-  }
-  return true
-}
 
 
-function initfile(stagename, data?: {}) {
-  let filename
-  if(stagename == "stage1"){
-    filename = stage1file;
-  }else if(stagename == "stage2"){
-    filename = stage2file;
-  }else if(stagename == "stage3"){
-    filename = stage3file;
-  }else if(stagename == "stage4"){
-    filename = stage4file;
-  }
-  const stagestate = db.get(`${stagename}.state`).value();
-  fs.writeFileSync(
-    filename,
-    stagetxttemplate({
-      stage: stagename.split("stage")[1],
-      state: stagestate,
-      ...data,
-    })
-  );
-}
 
-function stagetxttemplate(data) {
-  const { stage, state, username, counter, score } = data;
-  const scorestep = db.get("config.stageconfig.stagespendscore").value();
-  if (state == "idle") {
-    return `舞台${stage}\r\n当前:\t\t空闲\r\n`;
-  } else if (state == "onstage") {
-    if (counter < 10 && counter % 2 == 0) {
-      return `舞台${stage}  请尽快操作否则将会自动下麦\r\n当前:    ${username}\r\n倒计时:    ${counter}\r\n单次记分:  ${scorestep}\r\n剩余积分:  ${score}\r\n`;
-    } else {
-      return `舞台${stage}\r\n当前:    \t\t${username}\r\n倒计时:    ${counter}\r\n单次记分:  ${scorestep}\r\n剩余积分:  ${score}\r\n`;
-    }
-  } else if (state == "catching") {
-    return `舞台${stage}\r\n当前:    \t\t${username}\r\n状态:    正在抓取..\r\n单次记分:  ${scorestep}\r\n剩余积分:  ${score}\r\n`;
-  } else if (state == "catchingthen2idle") {
-    return `积分不足抓取结束后将自动下麦\r\n舞台${stage}\r\n当前:    \t\t${username}\r\n状态:    正在抓取..\r\n单次记分:  ${scorestep}\r\n剩余积分:  ${score}\r\n`;
-  }else{
-    return "unknown state"
-  }
+function initfile() {
+  fs.writeFileSync(timerfile,"12:00");
 }
 
 function delefirstline(filename:any) {
@@ -770,78 +331,11 @@ function delelastline(filename: any) {
   }
 }
 
-async function savecsvfile(){
-  // const users = await db.get("user").fliter(o=>o.fishnumber>0).sortBy("fishnumber").value()
-  // 手写fishnumber排序
-  const users = await db.get("user").sort((m,n)=>{return n.fishnumber-m.fishnumber}).filter(o=>o.fishnumber).value()
-  // 细节坑 必须加个前缀\ufeff表示 这是一个表头，就可以在excel中正常显示中文了
-  let csvdata  =  '\ufeff用户名,ID,鱼头数,积分\n'
-  // 存在鱼头数大于0的用户
-  if(users){
-    for(let index in users){
-      const user  = users[index]
-      const {id, username,score,fishnumber} =   user
-      const datastring = `${username},${id},${fishnumber},${score}\n`
-      csvdata += datastring
-    }
-
-    fs.writeFileSync(fishfile,csvdata,{encoding:'utf-8'})
-  }
-  
-}
-
-
-async function talktohw(type:string,stagename?:string){
-  const hwconfig =  await db.get('config.hwconfig').value();
-  const {hwport,hwonstage,hwcatch,hwfeedfish,hwoffstage} = hwconfig;
-  const stageindex = stagename? stagename.split('stage')[1]:''
-  let hwurl = 'http://localhost:' + `${hwport}/`
-  if(type=='onstage'){
-    hwurl += `${hwonstage}/${stageindex}`
-  }else if(type=='offstage'){
-    hwurl += `${hwoffstage}/${stageindex}`
-  }else if(type=='catch'){
-    hwurl += `${hwcatch}/${stageindex}`
-  }else if(type=='feedfish'){
-    hwurl += `${hwfeedfish}`
-  }
-  let spsendurl = 'http://localhost:3000/serialport/send'
-  let spsenddata = ''
-  if(type=='onstage'){
-    spsenddata = `${hwonstage}/${stageindex}`
-  }else if(type=='offstage'){
-    spsenddata = `${hwoffstage}/${stageindex}`
-  }else if(type=='catch'){
-    spsenddata = `${hwcatch}/${stageindex}`
-  }else if(type=='feedfish'){
-    spsenddata = `${hwfeedfish}`
-  }
-  console.log(hwurl);
-  console.log(spsenddata);
-  try{
-    axios.get(hwurl).catch(err => {
-      console.log('error')
-    })
-    axios.post(spsendurl,{data:spsenddata}).catch(err => {
-      console.log('error')
-    })
-  }catch(err){
-    console.log(err)
-  };
-}
 
 async function init(){
   console.log('init in')
-  await db.get("stage1").assign({state:'idle',userid:''}).write()
-  await db.get("stage2").assign({state:'idle',userid:''}).write()
-  await db.get("stage3").assign({state:'idle',userid:''}).write()
-  await db.get("stage4").assign({state:'idle',userid:''}).write()
-  await initfile('stage1')
-  await initfile('stage2')
-  await initfile('stage3')
-  await initfile('stage4')
-  await savecsvfile()
+  initfile()
+  // await savecsvfile()
 }
-
 
 export { db, server };

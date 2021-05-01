@@ -5,9 +5,7 @@ import Danmu from '../views/danmu.vue'
 import Gift from '../views/gift.vue'
 import Command from '../views/command.vue'
 import User from '../views/user.vue'
-import HW from '../views/hw.vue'
 import Setting from '../views/setting.vue'
-import OBS from '../views/obs.vue'
 
 Vue.use(VueRouter)
 
@@ -23,7 +21,10 @@ const routes: Array<RouteConfig> = [
   {
     path: '/danmu',
     name: 'Danmu',
-    component: Danmu
+    component: Danmu,
+    meta: {
+      keepAlive:true
+    }
   },
   {
     path: '/gift',
@@ -41,19 +42,9 @@ const routes: Array<RouteConfig> = [
     component: User
   },
   {
-    path: '/hw',
-    name: 'HW',
-    component: HW
-  },
-  {
     path: '/setting',
     name: 'Setting',
     component: Setting
-  },
-  {
-    path: '/obs',
-    name: 'OBS',
-    component: OBS
   }
 ]
 

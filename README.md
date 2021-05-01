@@ -1,4 +1,4 @@
-# sp
+# douyu-timer
 
 ## Project setup
 ```

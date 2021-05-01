@@ -36,8 +36,8 @@ module.exports = {
         },
   
       },
-      externals: ['serialport'],
-      mainProcessWatch: ['src/api.ts','src/serialport.ts','src/danmu.ts'],
+      externals: [],
+      mainProcessWatch: ['src/api.ts','src/danmu.ts'],
       // chainWebpackMainProcess:(config) => {
       //   config.node.set("__dirname",false)
       // }
