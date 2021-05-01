@@ -30,8 +30,8 @@ export default class App extends Vue {
   tablist = [
     {
       name: "",
-      text: "弹幕",
-      link: "/danmu"
+      text: "监控",
+      link: "/"
     },{
       name: "",
       text: "礼物",

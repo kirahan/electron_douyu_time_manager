@@ -18,14 +18,14 @@ const routes: Array<RouteConfig> = [
       keepAlive:true
     }
   },
-  {
-    path: '/danmu',
-    name: 'Danmu',
-    component: Danmu,
-    meta: {
-      keepAlive:true
-    }
-  },
+  // {
+  //   path: '/danmu',
+  //   name: 'Danmu',
+  //   component: Danmu,
+  //   meta: {
+  //     keepAlive:true
+  //   }
+  // },
   {
     path: '/gift',
     name: 'Gift',

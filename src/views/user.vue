@@ -26,10 +26,10 @@
                 </template>
 
                 <template v-if="debugmode" v-slot:item.debug="{ item }">
-                    <v-btn text color="green" @click.stop="debugfunctionlist.get(item)">关注</v-btn>
-                    <v-btn text color="purple" @click.stop="debugfunctionlist.offstage(item)">办卡</v-btn>
-                    <v-btn text color="orange" @click.stop="debugfunctionlist.feedfish(item)">送礼</v-btn>
-                    <v-btn text color="red" @click.stop="debugfunctionlist.feedfish(item)">删除</v-btn>
+                    <v-btn text color="green" @click.stop="debugfunctionlist.follow(item)">关注+1</v-btn>
+                    <v-btn text color="purple" @click.stop="debugfunctionlist.catchgift1(item)">礼物1</v-btn>
+                    <v-btn text color="orange" @click.stop="debugfunctionlist.catchgift2(item)">礼物2</v-btn>
+                    <v-btn text color="red" @click.stop="debugfunctionlist.deleteuser(item)">删除</v-btn>
                 </template>
 
               </v-data-table>
@@ -91,31 +91,24 @@ export default class user extends Vue {
   }
 
   debugfunctionlist = {
-    get: async (data)=>{
-      const {id,username,score,lastsing} = data
-      const sign = await this.$http.post('/check',{id})
+    follow: async (data)=>{
+      const follownumber = 1
+      const sign = await this.$http.post('/followsup',{follownumber})
       this.getuserdata()
     },
-    gift: async (data)=>{
-      const {id,username,score,lastsing} = data
-      const gfid = '195'
-      const sign = await this.$http.post('/catchgift',{id,gfid})
+    catchgift1: async (data)=>{
+      const gfid = '193'
+      const sign = await this.$http.post('/catchgift',{gfid})
       this.getuserdata()
     },
-    sign: async (data)=>{
-      const {id,username,score,lastsing} = data
-      const now = Date.now()
-      const sign = await this.$http.post('/sign',{id,now})
+    catchgift2: async (data)=>{
+      const gfid = '57'
+      const sign = await this.$http.post('/catchgift',{gfid})
       this.getuserdata()
     },
-    offstage: async (data)=>{
-      const {id,username,score,lastsing} = data
-      const onstage = await this.$http.post('/stage/offstage',{id}) 
-      this.getuserdata()
-    },
-    feedfish: async(data) => {
+    deleteuser:async(data) => {
       const {id} = data
-      const feedfish = await this.$http.post('/feedfish',{id})
+      const user = await this.$http.delete(`/user/${id}`)
       this.getuserdata()
     }
   }

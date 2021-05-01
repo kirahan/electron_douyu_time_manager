@@ -51,14 +51,15 @@
                 <v-container>
                   <v-row>
                     <v-autocomplete
+                       v-if="!giftupdate"
                       v-model="giftvalue"
                       :items="douyugiftlist"
                       item-text="name"
-                      item-value=""
+                      item-value="id"
                       label="礼物列表[价值|名称|ID|图标]"
                       @change="updategiftformdata"
                     >
-                      <template v-slot:item="{ item }">
+                      <template v-slot:item="{ item }" >
                         <v-list-item-avatar
                           color="indigo"
                           class="subtitle-2 font-weight-light white--text"
@@ -129,11 +130,13 @@ export default class Gift extends Vue {
   }
   giftvalue={}
   douyugiftlist=[];
+  douyugiftobj = {};
   dialog = false;
   giftupdate = false;
   giftdata = {
     id: "",
     name: "",
+    price:"",
     url: "",
     timevalue: "",
     enable: true,
@@ -141,22 +144,24 @@ export default class Gift extends Vue {
   headers = [
     { text: "礼物ID", align: "start", value: "id" },
     { text: "礼物名称", value: "name" },
-    { text: "时长增/减[分钟]", value: "score" },
+    { text: "礼物价值[元]", value: "price" },
+    { text: "时长增/减[分钟]", value: "timevalue" },
     { text: "图标", value: "icon" , align: "center"},
     { text: "启用", value: "enable", align: "center" },
   ];
   desserts = [];
 
 
-// 无法获取到真个数组数据只能获得name字段，所以不能用watch实现
-  // @Watch('giftvalue')
-  // onGiftValueChange(newval,oldval){
-  //   console.log('giftvalue change',newval,oldval);
-  //   this.giftdata.id = newval.id
-  //   this.giftdata.name = newval.name
-  //   this.giftdata.url = newval.url
+// 无法获取到真个数组数据只能获得name字段，所以改为获取到id字段，然后再用watch实现
+  @Watch('giftvalue')
+  onGiftValueChange(newval,oldval){
+    console.log('giftvalue change',newval,oldval);
+    this.giftdata.id = this.douyugiftobj[newval].id
+    this.giftdata.name = this.douyugiftobj[newval].name
+    this.giftdata.price = (this.douyugiftobj[newval].price/100).toString()
+    this.giftdata.url = this.douyugiftobj[newval].url
 
-  // }
+  }
 
 
   addgift() {
@@ -165,6 +170,7 @@ export default class Gift extends Vue {
     this.giftdata = {
       id: "",
       name: "",
+      price:"",
       url: "",
       timevalue: "",
       enable: true,
@@ -178,6 +184,9 @@ export default class Gift extends Vue {
   async getalldouyugiftlsit(){
     const giftlist = await this.$http.get("/douyugiftlist");
     this.douyugiftlist = giftlist.data;
+
+    const giftobj = await this.$http.get("/douyugiftobj");
+    this.douyugiftobj = giftobj.data
   }
 
   async addgiftdata() {
@@ -190,6 +199,7 @@ export default class Gift extends Vue {
     const id = data.id;
     const gift = await this.$http.get(`/gift/${id}`);
     this.giftdata = gift.data;
+    this.giftvalue = gift.data.id
     this.dialog = true;
     this.giftupdate = true;
   }
@@ -200,7 +210,9 @@ export default class Gift extends Vue {
   }
 
   async updategift() {
+    console.log(this.giftdata)
     const res = await this.$http.put("/gift", this.giftdata);
+
     this.dialog = false;
     this.getgiftdata();
   }

@@ -18,9 +18,11 @@
                 <v-btn :color="formconfig.danmu.closecolor" dark elevation="2" @click="closedanmu"
                   >{{formconfig.danmu.btnclosetitle}}</v-btn
                 >
-                <v-switch v-model="showdanmu" color="error" :label="showdanmu?'关闭弹幕':'显示弹幕'"></v-switch>
-            
+                <v-switch v-model="showdanmu" color="error" :label="showdanmu?'关闭弹幕':'显示弹幕'" ></v-switch>
 
+                <v-btn small color="success" style="margin-right:20px" @click="starttimer">开始</v-btn>
+                <!-- <v-btn color="warning" style="margin-right:20px" @click="pausetimer">暂停</v-btn> -->
+                <v-btn small color="danger" style="margin-right:20px" @click="resettimer">重置</v-btn>
               </div>
 
               <v-col cols="12" class="eventlog rounded-lg">
@@ -294,13 +296,26 @@ if(this.danmumsgs.length>20){
             const user = await this.$http.get(`/userbyusername/${res.nn}`)
             if(user.data){
               const id = user.data.id
-              const arg = await this.$http.post('/catchgift',{id,gfid}) 
+              const arg = await this.$http.post('/catchgift',{gfid}) 
             }
     })
 
     
 
   }
+
+  async starttimer(){
+    const timer = await this.$http.get("/timer/start");
+  }
+
+  async pausetimer(){
+    const timer = await this.$http.get("/timer/pause");
+  }
+
+  async resettimer(){
+    const timer = await this.$http.get("/timer/reset");
+  }
+
 
 formatDate(datetime) {
     var date = new Date(datetime);
@@ -383,17 +398,19 @@ async checksubmitorregistration(arg){
 }
 .danmu {
   background-color: #1d2935;
+  margin-top: 20px;
   display: flex;
   flex-direction:column;
   justify-content:flex-end;
 }
 .eventlog{
+  margin-top: 20px;
   font-size: 12px;
   background-color: #1d2935;
   display: flex;
   flex-direction:column;
   justify-content:flex-end;
-  height: 88%;
+  height: 80%;
 }
 .obscheckboxpannel {
   display: flex;

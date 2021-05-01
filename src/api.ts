@@ -25,6 +25,13 @@ const db = low(adapter);
 const douyu_adapter = new FileSync(path.join(datapath, "/gift.json"));
 const douyu_db = low(douyu_adapter);
 
+
+let obs_timer_loopid = null
+let obs_timer_first_timestamp = Date.now();
+
+
+
+
 db.defaults({
   gift: [],
   user: [],
@@ -44,6 +51,11 @@ server.get("/douyugiftlist",(req,res)=>{
     giftarray.push(giftlist[index])
   }
   res.send(giftarray);
+})
+
+server.get("/douyugiftobj",(req,res)=>{
+  const giftlist = douyu_db.value();
+  res.send(giftlist);
 })
 
 
@@ -82,11 +94,11 @@ server.post("/gift", async (req, res) => {
 
 // 修改gift
 server.put("/gift", (req, res) => {
-  const { id, name, score, enable } = req.body;
+  const { id, name, price,timevalue, enable } = req.body;
   const newgift = db
     .get("gift")
     .find({ id })
-    .assign({ id, name, score, enable })
+    .assign({ id, name, price,timevalue, enable })
     .write();
   res.send(newgift);
 });
@@ -239,58 +251,103 @@ server.post("/config", async (req, res) => {
 });
 
 
-// 查询积分
-server.post("/check", async (req, res) => {
-  const id = req.body.id;
-  const user = await db
-    .get("user")
-    .find({ id })
-    .value();
-  const filedata = `[查询] ${user.username}\n当前总积分${user.score}\n当前鱼头${user.fishnumber}`;
-  fs.appendFileSync(signfile, filedata);
-  setTimeout(() => {
-    delelastline(signfile);
-  }, 3000);
-  res.send(user);
-});
 
-// 签到
-server.post("/sign", async (req, res) => {
-  const id = req.body.id;
-  const signtime = Number(req.body.now);
 
-  const user = await db
-    .get("user")
-    .find({ id })
-    .value();
-  const lastsign = Number(user.lastsign);
-  const oldscore = Number(user.score);
 
-  const signstep = Number(await db.get("config.signconfig.signstep").value());
-  const signscore = Number(await db.get("config.signconfig.signscore").value());
-  if (!lastsign || signtime - lastsign > signstep * 1000 * 60) {
-    const newscore = oldscore + signscore;
-    const username = user.username;
-    const filedata = `签到成功!\t${username}通过签到获取积分${signscore}分,总积分${newscore}\r\n`;
-    fs.appendFile(signfile, filedata, (err) => {
-      setTimeout(() => {
-        delefirstline(signfile);
-      }, 3000);
-    });
-    await db
-      .get("user")
-      .find({ id })
-      .assign({ lastsign: signtime, score: newscore })
-      .write();
-    const newuser = await db
-      .get("user")
-      .find({ id })
-      .value();
-    res.send(newuser);
+// 控制时间
+server.post("changetime",async (req, res) => {
+  const d_time = Number(req.body.dtime)
+  const oldtime = await db.get("timergap").value()
+  const newtime = await db.set("timergap",oldtime + d_time).write();
+  res.send(newtime);
+})
+
+function changetime(dtime){
+  const d_time = Number(dtime)
+  const oldtime =  db.get("timergap").value()
+  const newtime =  db.set("timergap",oldtime + d_time).write();
+}
+
+
+//检测到关注上升
+server.post("/followsup", async (req, res) => {
+  console.log('关注上涨')
+  const newfol = req.body.follownumber;
+  const oldfol = await db.get("follows").value();
+  const followaddtime = (await db.get("config.timerconfig.followaddtime").value())*60
+ 
+  if ((Number(newfol)-Number(oldfol))>0) {
+    changetime(followaddtime)
+    res.send(true);
   } else {
-    res.send({ error: "冷却中" });
+    res.send({ error: "未知礼物" });
   }
 });
+
+
+// 收到礼物
+server.post("/catchgift", async (req, res) => {
+  console.log('获取礼物')
+  const gfid = req.body.gfid;
+  const giftdata = await db
+    .get("gift")
+    .find({ id: gfid })
+    .value();
+ 
+  if (giftdata && giftdata.enable) {
+    const gftime = Number(giftdata.timevalue)*60
+    changetime(gftime)
+    res.send(true);
+  } else {
+    res.send({ error: "未知礼物" });
+  }
+});
+
+// 控制计时器
+const first_time = db.get('timer').value();
+
+server.get("/timer/start",async (req, res) => {
+  obs_timer_first_timestamp = Date.now();
+  obs_timer_loopid = setInterval(() =>{
+    const timestamp = Date.now();
+    const gap = (timestamp-obs_timer_first_timestamp)/1000;
+    const timer_gap = db.get('timergap').value()
+
+    const realtime = first_time + timer_gap - gap
+    // console.log('[first_time]',first_time)
+    // console.log('[gap]',gap)
+    // console.log('[timer_gap]',timer_gap)
+    // console.log('[realtime]',realtime)
+    formatTime(realtime)
+  },33)
+  res.send(true)
+})
+server.get("/timer/pause",async (req, res) => {
+  clearInterval(obs_timer_loopid)
+  res.send(true)
+
+})
+server.get("/timer/reset",async (req, res) => {
+  clearInterval(obs_timer_loopid)
+  initfile()
+  res.send(true)
+})
+
+
+function formatTime(timevalue){
+  const t_value = Math.floor(Number(timevalue))
+  const sec_part = t_value%60 > 9 ? (t_value%60).toString() : ('0'+ (t_value%60).toString())
+  const min_part = t_value%3600/60 >9 ? (Math.floor(t_value%3600/60)).toString() : "0" + (Math.floor(t_value%3600/60)).toString()
+  const hour_part = t_value < 3600 ? undefined :(Math.floor(t_value/3600)).toString() 
+  let finnal_string = ''
+  if(hour_part){
+    finnal_string = `${hour_part}:${min_part}:${sec_part}`
+  }else{
+    finnal_string = `${min_part}:${sec_part}`
+  }
+  fs.writeFileSync(timerfile,finnal_string);
+}
+
 
 
 server.listen(3000, () => {
@@ -300,9 +357,11 @@ server.listen(3000, () => {
 
 
 
-
+const starttime = db.get('config.timerconfig.starttime').value()*60
 function initfile() {
-  fs.writeFileSync(timerfile,"12:00");
+  db.set('timer',starttime).write();
+  db.set('timergap',0).write();
+  formatTime(starttime)
 }
 
 function delefirstline(filename:any) {
@@ -330,6 +389,7 @@ function delelastline(filename: any) {
     fs.writeFileSync(filename, newdata);
   }
 }
+
 
 
 async function init(){

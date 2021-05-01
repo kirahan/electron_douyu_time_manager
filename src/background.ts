@@ -11,13 +11,9 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 const debugpath = isDevelopment ? __dirname :process.cwd()
 
 const datapath = path.join(debugpath, '/data')
-const obspath = path.join(debugpath,'/obstemplate')
 
 if(!fs.pathExistsSync(datapath)){
     fs.mkdirSync(datapath)
-}
-if(!fs.pathExistsSync(obspath)){
-  fs.mkdirSync(obspath)
 }
 
 const db = require('./api').db
@@ -40,74 +36,6 @@ const passornot = axios.get('http://solarsunrise.cn/yu/pass.json').then((res)=>{
   }
 })
 
-
-
-
-ipcMain.on('export-obsfiles', (event, arg) => {
-  console.log('export-file')
-  const helpfile = path.join(obspath,'/帮助.txt')
-  const signfile = path.join(obspath,'/签到.txt')
-  const giftfile = path.join(obspath,'/礼物.txt')
-  const stage1file = path.join(obspath,'/上麦1.txt')
-  const stage2file = path.join(obspath,'/上麦2.txt')
-  const stage3file = path.join(obspath,'/上麦3.txt')
-  const stage4file = path.join(obspath,'/上麦4.txt')
-
-  const obssenceconfig = path.join(obspath,'/obs模板.json')
-  const obsconfig = path.join(obspath,'/obs场景-用于导入obs配置.json')
-  fs.readFile(obssenceconfig,(err, data:any) =>{
-    if(err){
-      console.log(err)
-    }else{
-      // console.log(JSON.parse(data))
-      const config = JSON.parse(data)
-      config.sources[0].settings.file = stage4file 
-      config.sources[1].settings.file = stage3file 
-      config.sources[2].settings.file = stage1file 
-      config.sources[3].settings.file = stage2file 
-      config.sources[6].settings.file = helpfile 
-      config.sources[7].settings.file = giftfile 
-      config.sources[8].settings.file = signfile 
-      fs.writeFileSync(obsconfig,JSON.stringify(config))
-    };
-  })
-  
-
-  if(arg.obsconfig.obsenablefiles[0]){
-      fs.writeFile(helpfile, arg.obsconfig.helpcontent, (err) => {
-        if (err) throw err;
-    });
-  } 
-  if(arg.obsconfig.obsenablefiles[1]){
-    fs.writeFile(signfile, '', (err) => {
-      if (err) throw err;
-  });
-  } 
-  if(arg.obsconfig.obsenablefiles[2]){
-    fs.writeFile(giftfile, '', (err) => {
-      if (err) throw err;
-  });
-  } 
-  if(arg.obsconfig.obsenablefiles[3]){
-    fs.writeFile(stage1file,'', (err) => {
-      if (err) throw err;
-    });}
-  if(arg.obsconfig.obsenablefiles[4]){
-    fs.writeFile(stage2file,'', (err) => {
-      if (err) throw err;
-  });
-  }
-  if(arg.obsconfig.obsenablefiles[5]){
-    fs.writeFile(stage3file,'', (err) => {
-      if (err) throw err;
-    });}
-  if(arg.obsconfig.obsenablefiles[6]){
-    fs.writeFile(stage4file,'', (err) => {
-      if (err) throw err;
-  });
-  }
-  
-})
 
 
 // Scheme must be registered before the app is ready
