@@ -296,7 +296,7 @@ if(this.danmumsgs.length>20){
             const user = await this.$http.get(`/userbyusername/${res.nn}`)
             if(user.data){
               const id = user.data.id
-              const arg = await this.$http.post('/catchgift',{gfid}) 
+              const arg = await this.$http.post('/catchgift',{gfid,gfcnt}) 
             }
     })
 

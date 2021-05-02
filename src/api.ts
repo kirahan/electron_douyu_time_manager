@@ -289,13 +289,14 @@ server.post("/followsup", async (req, res) => {
 server.post("/catchgift", async (req, res) => {
   console.log('获取礼物')
   const gfid = req.body.gfid;
+  const gfcnt = req.body.gfcnt || 1;
   const giftdata = await db
     .get("gift")
     .find({ id: gfid })
     .value();
  
   if (giftdata && giftdata.enable) {
-    const gftime = Number(giftdata.timevalue)*60
+    const gftime = Number(giftdata.timevalue)*60*gfcnt
     changetime(gftime)
     res.send(true);
   } else {
