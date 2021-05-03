@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow,Menu,ipcMain } from 'electron'
+import { app, protocol, BrowserWindow,BrowserView,Menu,ipcMain,webFrame } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import fs from 'fs-extra'
@@ -49,20 +49,48 @@ async function createWindow() {
   const win = new BrowserWindow({
     width: 1680,
     height: 1200,
-    title:'直播抓鱼-设置面板',
+    title:'斗鱼计时器-设置面板',
     // frame: false ,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       preload: path.join(debugpath, 'preload.js'),
       nodeIntegration: true,
-      contextIsolation:false
+      contextIsolation:false,
+      webviewTag:true
     }
   })
+
+  // const view = new BrowserView({
+  //   webPreferences:{
+  //     nodeIntegration:true,
+  //     contextIsolation:true,
+  //     webSecurity:false
+  //   }
+  // })
+  // const douyuurl = "https://www.douyu.com/7874579"
+
+  // win.setBrowserView(view)
+  // view.setBounds({ x: 500, y: 100, width: 600, height: 300 })
+  // view.webContents.loadURL(douyuurl)
+
+
+  // const douyuroom =  new BrowserWindow({
+  //   width: 800,
+  //   height:600,
+  //   title:'room',
+  //   frame: false,
+  //   webPreferences:{
+  //     nodeIntegration:true,
+  //     contextIsolation:true,
+  //     webSecurity:false
+  //   }
+  // })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string)
+    
     if (!process.env.IS_TEST) win.webContents.openDevTools()
   } else {
     createProtocol('app')

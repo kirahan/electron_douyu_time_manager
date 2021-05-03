@@ -34,7 +34,8 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx", 
-    "src/plugins/preload.ts"
+    "src/plugins/preload.ts",
+    "src/plugins/a.ts"
   ],
   "exclude": [
     "node_modules"

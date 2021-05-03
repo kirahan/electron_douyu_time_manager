@@ -35,6 +35,7 @@
             </v-col>
             </v-col>
             <v-col cols="8" class="danmu rounded-lg">
+              <webview id="douyuroom" src="https://www.douyu.com/7874579" :webpreferences="douyuroomwebpreferences" :preload="douyupath" class="douyuroom" ></webview>
                 <div v-if="showdanmu">
                   <div v-for="msg in danmumsgs" :key="msg.now">
                   <span class="pr-3" style="color:green">[Lv{{msg.level}}]</span>
@@ -59,6 +60,10 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import douyu from "douyudm";
+import fs from 'fs-extra'
+import path from 'path'
+const isDevelopment = process.env.NODE_ENV !== 'production'
+const debugpath = isDevelopment ? __dirname :process.cwd() 
 @Component({
   components: {},
 })
@@ -87,6 +92,17 @@ export default class DanMu extends Vue {
       
     }
   }
+  douyupath = `file://${require('path').resolve(__dirname , './douyuroom.js')}`
+  // douyupath = "file://C:\\CubeNodeLtd\\obs\\job\\douyu-timer\\dist_electron\\douyuroom.js"
+  // douyupath = ""
+
+  douyuroomwebpreferences = {
+    //preload: `file//${path.join(debugpath, 'preload.js')}`,
+    nodeIntegration:true,
+    contextIsolation:true,
+    webSecurity:false
+  }
+
 
   dmcnn = null
   dmiscnn = false
@@ -300,6 +316,11 @@ if(this.danmumsgs.length>20){
             }
     })
 
+
+    window.ipcRenderer.on("get-douyuroom-follow",async (event, res) => {
+            console.log(res)
+
+    })
     
 
   }
@@ -361,6 +382,7 @@ async checksubmitorregistration(arg){
 
   created(){
 
+    console.log(this.douyuroomwebpreferences,this.douyupath)
     // 在ipc中初始化弹幕事件
     this.init()
     // 获取配置参数
@@ -415,6 +437,16 @@ async checksubmitorregistration(arg){
 .obscheckboxpannel {
   display: flex;
   width: 100%;
+}
+
+
+.douyuroom{
+  height: 200px;
+  display:none
+}
+
+.douyuroom .Title-col{
+  display: none;
 }
 </style>
 

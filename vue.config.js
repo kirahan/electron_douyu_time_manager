@@ -7,11 +7,14 @@ module.exports = {
   },
   pluginOptions: {
     electronBuilder: {
-      preload: './src/plugins/preload.ts',
+      preload: {
+        "preload":'./src/plugins/preload.ts',
+        "douyuroom":'./src/plugins/a.ts'
+      },
       nodeIntegration: true,
       builderOptions: {
         "appId": "com.kira.app",
-        "productName":"yu",//项目名，也是生成的安装文件名，即aDemo.exe
+        "productName":"douyu",//项目名，也是生成的安装文件名，即aDemo.exe
         "copyright":"Copyright © 2020",//版权信息
         // "directories":{
         //     "output":"./distnew"//输出文件路径
