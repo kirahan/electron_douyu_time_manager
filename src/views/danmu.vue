@@ -92,12 +92,15 @@ export default class DanMu extends Vue {
       
     }
   }
-  douyupath = `file://${require('path').resolve(__dirname , './douyuroom.js')}`
+
+  douyuRoomWebview = null
+
+  douyupath = `file://${require('path').resolve(process.cwd()  , './dist_electron/douyuroom.js')}`
   // douyupath = "file://C:\\CubeNodeLtd\\obs\\job\\douyu-timer\\dist_electron\\douyuroom.js"
   // douyupath = ""
 
   douyuroomwebpreferences = {
-    //preload: `file//${path.join(debugpath, 'preload.js')}`,
+    // preload: "file://C:\\CubeNodeLtd\\obs\\job\\douyu-timer\\dist_electron\\douyuroom.js",
     nodeIntegration:true,
     contextIsolation:true,
     webSecurity:false
@@ -150,10 +153,35 @@ export default class DanMu extends Vue {
     }else if(!this.dmiscnn){
         this.discnnbtnpressed = false
         await  window.ipcRenderer.send("danmu-command-cnn",this.roomid);
+        this.douyuRoomWebview.send("start-douyu-follow",this.roomid)
     }
     // 刷新状态
   // await this.getdanmuinfo()
   
+  }
+
+
+  // 初始化webview页面
+  initdouyuroom(){
+    this.douyuRoomWebview = document.querySelector("webview")
+    this.douyuRoomWebview.openDevTools()
+    this.douyuRoomWebview.send("ping")
+
+    // 注册响应事件
+    this.douyuRoomWebview.addEventListener('ipc-message', (event) => {
+        
+        if(event.channel == 'pong'){
+            console.log('[init douyuroom.ts ipc channel success]')
+        }else
+        if(event.channel == 'update-douyuroom-follownum'){
+            console.log('[room follownum:]',event.args) // 获得更新数据
+        }else
+        if(event.channel == 'stop-douyuroom-follownum'){
+            console.log('[stop update room follownum]') // 停止更新数据
+        }else{
+          console.log('[get unknown ipc message form douyuroom.ts file]',event.channel)
+        }
+        })
   }
 
   async closedanmu(){
@@ -165,6 +193,7 @@ export default class DanMu extends Vue {
       this.dmiscnn = false
       this.discnnbtnpressed = true
       window.ipcRenderer.send("danmu-command-close");
+      this.douyuRoomWebview.send("stop-douyu-follow")
     }
     // 刷新状态
     this.getdanmuinfo()
@@ -383,6 +412,15 @@ async checksubmitorregistration(arg){
   created(){
 
     console.log(this.douyuroomwebpreferences,this.douyupath)
+    
+    // 获取到webview页面同时打开开发者工具
+    // 需要一定延迟等待页面完全载入
+    setTimeout(()=>{
+      this.initdouyuroom()
+    },5000)
+    
+
+
     // 在ipc中初始化弹幕事件
     this.init()
     // 获取配置参数

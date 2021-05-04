@@ -10,49 +10,47 @@ console.log('preload loaded')
 
 
 
-setTimeout(()=>{
-    console.log('[run 5 second]')
+// setTimeout(()=>{
+//     console.log('[run 5 second]')
 
-    const douyuroom = document.querySelector("webview")
-    // console.log('find douyuroom pannel',douyuroom)
+//     const douyuroom = document.querySelector("webview")
+//     // console.log('find douyuroom pannel',douyuroom)
 
-    douyuroom.executeJavaScript(`
-        const header = document.querySelector(".layout-Header")
-        const aside = document.querySelector(".layout-Aside")
-        const right = document.querySelector(".layout-Player-aside")
-        const toolbar = document.querySelector(".layout-Player-toolbar")
-        const video = document.querySelector(".layout-Player-video")
-        const bottom = document.querySelector(".layout-Bottom")
-        header.style.display = "none"
-        aside.style.display = "none"
-        right.style.display = "none"
-        toolbar.style.display = "none"
-        video.style.display = "none"
-        bottom.style.display = "none"
+//     // douyuroom.executeJavaScript(`
+//     //     const header = document.querySelector(".layout-Header")
+//     //     const aside = document.querySelector(".layout-Aside")
+//     //     const right = document.querySelector(".layout-Player-aside")
+//     //     const toolbar = document.querySelector(".layout-Player-toolbar")
+//     //     const video = document.querySelector(".layout-Player-video")
+//     //     const bottom = document.querySelector(".layout-Bottom")
+//     //     header.style.display = "none"
+//     //     aside.style.display = "none"
+//     //     right.style.display = "none"
+//     //     toolbar.style.display = "none"
+//     //     video.style.display = "none"
+//     //     bottom.style.display = "none"
 
 
-        // const avatar = document.querySelector(".Title-anchorPic")
-        // avatar.style.display = "none"
+//     //     // const avatar = document.querySelector(".Title-anchorPic")
+//     //     // avatar.style.display = "none"
 
-        // const collist = document.querySelectorAll(".Title-col")
-        // for (col of collist){
-        //     col.style.display = "none"
-        // }
+//     //     // const collist = document.querySelectorAll(".Title-col")
+//     //     // for (col of collist){
+//     //     //     col.style.display = "none"
+//     //     // }
 
-        // const followPannel = collist[0]
-        // followPannel.style.display = "block"
-        // followPannel.style.float = "none"
+//     //     // const followPannel = collist[0]
+//     //     // followPannel.style.display = "block"
+//     //     // followPannel.style.float = "none"
 
-        const follownum = document.querySelector('.Title-followNum').innerText
-        console.log(follownum)
-        console.log(window,window.ipcRenderer)
-        window.ipcRenderer.send('get-douyuroom-follow',follownum);
-        // douyuroom.send('get-douyuroom-follow',follownum)
+//     //     const follownum = document.querySelector('.Title-followNum').innerText
+//     //     console.log(follownum)
+
     
-        `)
+//     //     `)
 
-        douyuroom.openDevTools()
-},5000)
+//     douyuroom.openDevTools()
+// },5000)
 
 // 1、diaplay:none  真正意义上的隐藏，页面源码都不显示隐藏的页面源码，隐藏的元素不占用任何空间，元素的盒空间都不生成，好像元素就不存在，但是可以通过DOM操作访问到，如$(" ")
 
