@@ -364,7 +364,8 @@ function formatTime(timevalue){
   const hour_part = t_value < 3600 ? undefined :(Math.floor(t_value/3600)).toString() 
   let finnal_string = ''
   if(hour_part){
-    finnal_string = `${hour_part}小时${min_part}分${sec_part}秒`
+    finnal_string = `${hour_part}小时${min_part}分`
+    // finnal_string = `${hour_part}小时${min_part}分${sec_part}秒`
   }else{
     finnal_string = `${min_part}分${sec_part}秒`
   }
