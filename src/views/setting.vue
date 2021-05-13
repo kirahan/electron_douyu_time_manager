@@ -232,6 +232,8 @@ export default class Setting extends Vue {
     const res = await this.$http.post("/config", config);
     console.log(res);
     this.getconfig();
+
+    const resettimer = await this.$http.get("/timer/reset");
   }
 
   resetconfig(type) {

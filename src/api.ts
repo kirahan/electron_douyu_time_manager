@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const low = require("lowdb");
+import { ipcMain } from 'electron'
 
 const FileSync = require("lowdb/adapters/FileSync");
 import fs from "fs-extra";
@@ -304,10 +305,22 @@ server.post("/catchgift", async (req, res) => {
   }
 });
 
-// 控制计时器
-const first_time = db.get('timer').value();
+
+let apichannel = null
+
+
+    // 握手
+    ipcMain.on('api-client-init', (event, arg) => {
+        console.log(arg) // prints "ping"
+        apichannel = event
+        event.reply('api-server-save-client-channel', 'pong')
+      })
+
 
 server.get("/timer/start",async (req, res) => {
+  
+  // 控制计时器
+  let first_time = db.get('timer').value();
   obs_timer_first_timestamp = Date.now();
   obs_timer_loopid = setInterval(() =>{
     const timestamp = Date.now();
@@ -334,6 +347,15 @@ server.get("/timer/reset",async (req, res) => {
   res.send(true)
 })
 
+server.post("/timer/change",async (req, res) => {
+  const newtimer = req.body.time;
+  let starttime = newtimer*60
+  db.set('timer',starttime).write();
+  db.set('timergap',0).write();
+  formatTime(starttime)
+  res.send(true)
+})
+
 
 function formatTime(timevalue){
   const t_value = Math.floor(Number(timevalue))
@@ -342,9 +364,12 @@ function formatTime(timevalue){
   const hour_part = t_value < 3600 ? undefined :(Math.floor(t_value/3600)).toString() 
   let finnal_string = ''
   if(hour_part){
-    finnal_string = `${hour_part}:${min_part}:${sec_part}`
+    finnal_string = `${hour_part}小时${min_part}分${sec_part}秒`
   }else{
-    finnal_string = `${min_part}:${sec_part}`
+    finnal_string = `${min_part}分${sec_part}秒`
+  }
+  if(apichannel){
+    apichannel.reply('update-timer-data', finnal_string)
   }
   fs.writeFileSync(timerfile,finnal_string);
 }
@@ -358,8 +383,8 @@ server.listen(3000, () => {
 
 
 
-const starttime = db.get('config.timerconfig.starttime').value()*60
 function initfile() {
+  let starttime = db.get('config.timerconfig.starttime').value()*60
   db.set('timer',starttime).write();
   db.set('timergap',0).write();
   formatTime(starttime)

@@ -19,13 +19,17 @@
                   >{{formconfig.danmu.btnclosetitle}}</v-btn
                 >
                 <v-switch v-model="showdanmu" color="error" :label="showdanmu?'关闭弹幕':'显示弹幕'" ></v-switch>
-
-                <v-btn small color="success" style="margin-right:20px" @click="starttimer">开始</v-btn>
+                <v-text-field v-model="newtimervalue"  class="timerinput" dark label="设置时间[分钟]"></v-text-field>
+                <v-btn small elevation="2" color="error" style="margin-right:10px" @click="changetimer">修改</v-btn>
+                <v-btn small elevation="2" :color="timerstartflag?'success':'primary'" style="margin-right:10px" @click="starttimer">开始</v-btn>
                 <!-- <v-btn color="warning" style="margin-right:20px" @click="pausetimer">暂停</v-btn> -->
-                <v-btn small color="danger" style="margin-right:20px" @click="resettimer">重置</v-btn>
+                <v-btn small elevation="2" :color="timerstartflag?'error':''"  @click="resettimer">重置</v-btn>
               </div>
 
               <v-col cols="12" class="eventlog rounded-lg">
+                <div class="douyutimer">{{douyutimer}}</div>
+                <div >斗鱼粉丝数据真实：0123456789</div>
+                <div :style="douyufontstyle">斗鱼粉丝数据虚假：0123456789</div>
                 <div v-for="event in eventlist" :key="event.message+Math.random()">
                   <span class="pr-3" style="color:grey">{{event.timestamp}}</span>
                   <span class="pr-3" style="color:red">[{{event.type}}]</span>
@@ -35,7 +39,7 @@
             </v-col>
             </v-col>
             <v-col cols="8" class="danmu rounded-lg">
-              <webview id="douyuroom" src="https://www.douyu.com/7874579" :webpreferences="douyuroomwebpreferences" :preload="douyupath" class="douyuroom" ></webview>
+              <!-- <webview id="douyuroom" src="https://www.douyu.com/5186248" :webpreferences="douyuroomwebpreferences" :preload="douyupath" class="douyuroom" ></webview> -->
                 <div v-if="showdanmu">
                   <div v-for="msg in danmumsgs" :key="msg.now">
                   <span class="pr-3" style="color:green">[Lv{{msg.level}}]</span>
@@ -95,10 +99,14 @@ export default class DanMu extends Vue {
 
   douyuRoomWebview = null
 
+  douyufontstyle = {}
+
+  // webview页面脚本文件
   douyupath = `file://${require('path').resolve(process.cwd()  , './dist_electron/douyuroom.js')}`
   // douyupath = "file://C:\\CubeNodeLtd\\obs\\job\\douyu-timer\\dist_electron\\douyuroom.js"
   // douyupath = ""
 
+  // webview web属性
   douyuroomwebpreferences = {
     // preload: "file://C:\\CubeNodeLtd\\obs\\job\\douyu-timer\\dist_electron\\douyuroom.js",
     nodeIntegration:true,
@@ -106,6 +114,11 @@ export default class DanMu extends Vue {
     webSecurity:false
   }
 
+  
+  // flag of timer
+  timerstartflag = false;
+  newtimervalue = null;
+  douyutimer = null;
 
   dmcnn = null
   dmiscnn = false
@@ -153,7 +166,7 @@ export default class DanMu extends Vue {
     }else if(!this.dmiscnn){
         this.discnnbtnpressed = false
         await  window.ipcRenderer.send("danmu-command-cnn",this.roomid);
-        this.douyuRoomWebview.send("start-douyu-follow",this.roomid)
+        //this.douyuRoomWebview.send("start-douyu-follow",this.roomid)
     }
     // 刷新状态
   // await this.getdanmuinfo()
@@ -172,6 +185,22 @@ export default class DanMu extends Vue {
         
         if(event.channel == 'pong'){
             console.log('[init douyuroom.ts ipc channel success]')
+        }else
+        if(event.channel == 'get-douyuroom-font'){
+            const douyufont = event.args[0]
+            console.log('[get room font:]',event.args) // 获得字体文件地址
+
+            //动态添加自定义字体样式    
+            let style = document.createElement('style');
+            style.type = "text/css";
+            style.innerText = `@font-face {font-family:'douyufont';src:url(${douyufont})}`;
+            document.getElementsByTagName('head')[0].appendChild(style)
+            console.log('[add douyufont into page:]') // 获得字体文件地址
+            
+            this.douyufontstyle = {
+              "color":"red",
+              "font-family":'douyufont'
+            }
         }else
         if(event.channel == 'update-douyuroom-follownum'){
             console.log('[room follownum:]',event.args) // 获得更新数据
@@ -205,6 +234,7 @@ export default class DanMu extends Vue {
     window.ipcRenderer.removeAllListeners("danmu-msg")
 
     window.ipcRenderer.send("danmu-client-init", 'ping');
+    window.ipcRenderer.send("api-client-init", 'ping');
 
     window.ipcRenderer.on("server-tell-client-dmiscnn",(event, {dmiscnn,roomid}) => {
       console.log('[dmiscnn]',dmiscnn)
@@ -351,11 +381,28 @@ if(this.danmumsgs.length>20){
 
     })
     
+    window.ipcRenderer.on("update-timer-data",async(event,res)=>{
+      this.douyutimer = res
+    })
+  }
+
+  async changetimer(){
+    if(!this.newtimervalue){
+      return
+    }
+    if(this.timerstartflag){
+      const timer = await this.$http.get("/timer/reset");
+      this.timerstartflag = false
+    }
+    const newtimer = await this.$http.post("/timer/change",{time:this.newtimervalue});
 
   }
 
   async starttimer(){
-    const timer = await this.$http.get("/timer/start");
+    if(!this.timerstartflag){
+      const timer = await this.$http.get("/timer/start");
+      this.timerstartflag = true
+    }
   }
 
   async pausetimer(){
@@ -363,7 +410,11 @@ if(this.danmumsgs.length>20){
   }
 
   async resettimer(){
-    const timer = await this.$http.get("/timer/reset");
+    if(this.timerstartflag){
+      const timer = await this.$http.get("/timer/reset");
+      this.timerstartflag = false
+    }
+    
   }
 
 
@@ -415,10 +466,10 @@ async checksubmitorregistration(arg){
     
     // 获取到webview页面同时打开开发者工具
     // 需要一定延迟等待页面完全载入
-    setTimeout(()=>{
+   /*  setTimeout(()=>{
       this.initdouyuroom()
     },5000)
-    
+     */
 
 
     // 在ipc中初始化弹幕事件
@@ -485,6 +536,17 @@ async checksubmitorregistration(arg){
 
 .douyuroom .Title-col{
   display: none;
+}
+
+.timerinput{
+  width:150px;
+  display: inline-block !important;
+  margin-right: 10px;
+}
+
+.douyutimer{
+  font-size: 36px;
+  color: blueviolet;
 }
 </style>
 
