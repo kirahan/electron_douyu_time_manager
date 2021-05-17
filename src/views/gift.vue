@@ -54,7 +54,7 @@
                        v-if="!giftupdate"
                       v-model="giftvalue"
                       :items="douyugiftlist"
-                      item-text="name"
+                      :item-text="supportNameandId"
                       item-value="id"
                       label="礼物列表[价值|名称|ID|图标]"
                       @change="updategiftformdata"
@@ -228,6 +228,11 @@ export default class Gift extends Vue {
     } else {
       this.addgiftdata();
     }
+  }
+
+
+  supportNameandId(item){
+    return item.name +"-" + item.id
   }
 
   created() {
