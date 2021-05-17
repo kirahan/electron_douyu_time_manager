@@ -521,7 +521,7 @@ async checksubmitorregistration(arg){
   display: flex;
   flex-direction:column;
   justify-content:flex-end;
-  height: 80%;
+  height: 78%;
 }
 .obscheckboxpannel {
   display: flex;
