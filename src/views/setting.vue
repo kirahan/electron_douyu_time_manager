@@ -35,10 +35,15 @@
                           "
                           class="obscheckboxpannel"
                         >
-                          <v-list-item-title style="max-width: fit-content;">{{
+                          <v-list-item-title style="flex:2 2 10%">{{
                             data.title
                           }}</v-list-item-title>
-
+                          <v-select
+                              v-model="data.value"
+                              :items="data.items"
+                              label="选择倒计时时间格式"
+                              dense
+                          ></v-select>
                         
                         </div>
                         <div
@@ -184,6 +189,31 @@ export default class Setting extends Vue {
           value: "1",
           subtitle1: "",
           subtitle2: "分",
+        },
+        {
+          title: "时间格式",
+          items: 
+          
+          [
+            {
+                text: ":/:--精确到秒--例如：12:34:56",
+                value: 0
+            },
+            {
+                text: ":--精确到分--例如：12:34",
+                value: 1
+            },
+            {
+                text: "小时/分钟/秒--精确到秒--例如：12小时34分钟56秒",
+                value: 2
+            },
+            {
+                text: "小时/分钟--精确到分--例如：12小时34分钟",
+                value: 3
+            }
+          ],
+          value: 2,
+          type: "select"
         }
       ],
     }
@@ -205,6 +235,8 @@ export default class Setting extends Vue {
       config.data.timerconfig.starttime;
     this.configlist.timerconfig.data[1].value =
       config.data.timerconfig.followaddtime;
+      this.configlist.timerconfig.data[2].value =
+      config.data.timerconfig.timerformat;
   }
 
   async getdefaultconfig() {
@@ -222,7 +254,8 @@ export default class Setting extends Vue {
     const timerconfig = {
       enable: this.configlist.timerconfig.enable,
       starttime: this.configlist.timerconfig.data[0].value,
-      followaddtime: this.configlist.timerconfig.data[1].value
+      followaddtime: this.configlist.timerconfig.data[1].value,
+      timerformat: this.configlist.timerconfig.data[2].value
     };
   
     const config = {

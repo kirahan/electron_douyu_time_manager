@@ -358,17 +358,50 @@ server.post("/timer/change",async (req, res) => {
 
 
 function formatTime(timevalue){
+  const format = db.get('config.timerconfig.timerformat').value()
   const t_value = Math.floor(Number(timevalue))
   const sec_part = t_value%60 > 9 ? (t_value%60).toString() : ('0'+ (t_value%60).toString())
   const min_part = t_value%3600/60 >9 ? (Math.floor(t_value%3600/60)).toString() : "0" + (Math.floor(t_value%3600/60)).toString()
   const hour_part = t_value < 3600 ? undefined :(Math.floor(t_value/3600)).toString() 
   let finnal_string = ''
-  if(hour_part){
-    finnal_string = `${hour_part}小时${min_part}分`
-    // finnal_string = `${hour_part}小时${min_part}分${sec_part}秒`
-  }else{
-    finnal_string = `${min_part}分${sec_part}秒`
+  let format_text= []
+  switch(format){
+    case 0:
+      format_text = [":",":"]
+      if(hour_part){
+        finnal_string = `${hour_part}${format_text[0]}${min_part}${format_text[1]}${sec_part}`
+      }else{
+        finnal_string = `${min_part}${format_text[1]}${sec_part}`
+      }
+      break
+    case 1:
+      format_text = [":"]
+      if(hour_part){
+        finnal_string = `${hour_part}${format_text[0]}${min_part}`
+      }else{
+        finnal_string = `${min_part}`
+      }
+      break
+    case 2:
+      format_text = ["小时","分钟","秒"]
+      if(hour_part){
+        finnal_string = `${hour_part}${format_text[0]}${min_part}${format_text[1]}${sec_part}${format_text[2]}`
+      }else{
+        finnal_string = `${min_part}${format_text[1]}${sec_part}${format_text[2]}`
+      }
+      break
+    case 3:
+      format_text = ["小时","分钟"]
+      if(hour_part){
+        finnal_string = `${hour_part}${format_text[0]}${min_part}${format_text[1]}`
+      }else{
+        finnal_string = `${min_part}${format_text[1]}`
+      }
+      break
   }
+  
+  
+
   if(apichannel){
     apichannel.reply('update-timer-data', finnal_string)
   }
