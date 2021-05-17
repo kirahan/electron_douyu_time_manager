@@ -8,8 +8,9 @@
               斗鱼礼物列表和时长规则
             </div>
             <v-btn color="#70CCA2" dark elevation="2" @click="addgift"
-              >新增</v-btn
-            >
+              >新增</v-btn>
+            <v-btn color="#CCA270" dark elevation="2" @click="opencustomergift"
+              >添加自定义礼物</v-btn>
             <v-divider class="mt-5"></v-divider>
 
             <v-col cols="12">
@@ -112,6 +113,55 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+
+
+          <v-dialog v-model="customgiftopen" persistent max-width="600px">
+             <v-card>
+              <v-card-title>
+                <span class="headline">添加自定义礼物</span>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-text-field
+                        label="id*[礼物id-必填不可以重复]"
+                        v-model="customgiftdata.id"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-text-field
+                        label="name*[礼物名称-必填可以重名]"
+                        v-model="customgiftdata.name"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-text-field
+                        label="price[礼物价格-可以不填]"
+                        v-model="customgiftdata.price"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-text-field
+                        label="url[礼物图片地址-可以不填]"
+                        v-model="customgiftdata.url"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="customgiftopen = false">
+                  关闭
+                </v-btn>
+                <v-btn color="green darken-1" text @click="addcustomergift">
+                  添加
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </v-col>
       </v-row>
     </v-container>
@@ -132,6 +182,19 @@ export default class Gift extends Vue {
   douyugiftlist=[];
   douyugiftobj = {};
   dialog = false;
+  customgiftopen = false;
+  customgiftdata = {
+      "id": "",
+      "name": "",
+      "type": "",
+      "price": "",
+      "url": "",
+      "desc": "",
+      "created_at": "",
+      "updated_at": ""
+  }
+
+
   giftupdate = false;
   giftdata = {
     id: "",
@@ -175,6 +238,18 @@ export default class Gift extends Vue {
       timevalue: "",
       enable: true,
     };
+  }
+
+  opencustomergift(){
+    this.customgiftopen = true
+  }
+
+async  addcustomergift(){
+    if(this.customgiftdata.id && this.customgiftdata.name){
+      const addgift = await this.$http.post("/addcustomgift",this.customgiftdata)
+      this.getgiftdata();
+      this.getalldouyugiftlsit();
+    }
   }
 
   updategiftformdata(data,newd){

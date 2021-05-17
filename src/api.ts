@@ -243,6 +243,15 @@ server.post("/config", async (req, res) => {
   res.send(config);
 });
 
+
+// 修改gift
+server.post("/addcustomgift", async (req, res) => {
+  const {id,name} = req.body
+  console.log(req.body)
+  const config = await douyu_db.set(id, req.body).write();
+  res.send(config);
+});
+
 // 控制时间
 server.post("changetime", async (req, res) => {
   const d_time = Number(req.body.dtime);
