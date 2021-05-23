@@ -7,7 +7,7 @@
             <v-col cols="12" class="no-padding">
               <v-row>
                 <v-col
-                  cols="6"
+                  cols="12"
                   v-for="config in configlist"
                   :key="config.data.type"
                 >
@@ -94,6 +94,7 @@
                           <v-text-field
                             v-if="!data.inputhide"
                             class="width-max"
+                            :disabled="data.disable"
                             dense
                             v-model="data.value"
                           ></v-text-field>
@@ -157,9 +158,10 @@ export default class Setting extends Vue {
       data: [
         {
           title: "默认直播间",
-          value: null,
+          value: 5488776,
           subtitle1: "",
-          subtitle2: "",
+          subtitle2: "[主播定制版不支持修改直播间]",
+          disable: true
         },
         {
           title: "自动重连",
@@ -188,7 +190,8 @@ export default class Setting extends Vue {
           title: "关注奖励时长",
           value: "1",
           subtitle1: "",
-          subtitle2: "分",
+          subtitle2: "分[暂不支持]",
+          disable: true
         },
         {
           title: "时间格式",

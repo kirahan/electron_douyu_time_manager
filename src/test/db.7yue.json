@@ -1,0 +1,256 @@
+{
+    "gift": [
+      {
+        "id": "21546",
+        "name": "告白卡",
+        "price": "6",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2021/03/24/7b95cef9caa8ae04ccb136f315bb2776.gif",
+        "timevalue": "6",
+        "enable": true
+      },
+      {
+        "id": "21463",
+        "name": "白云卡",
+        "price": "6",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2021/03/24/7b95cef9caa8ae04ccb136f315bb2776.gif",
+        "timevalue": "6",
+        "enable": true
+      },
+      {
+        "id": "20598",
+        "name": "星空卡",
+        "price": "6",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2019/10/25/7cfc3de442052b72ec44c58c2ae52269.gif",
+        "timevalue": "6",
+        "enable": true
+      },
+      {
+        "id": "20842",
+        "name": "时空战机",
+        "price": "100",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2020/04/21/28bb480c428c112cc52572b5b9ce1aa4.gif",
+        "timevalue": "-100",
+        "enable": true
+      },
+      {
+        "id": "21476",
+        "name": "迎春飞机",
+        "price": "100",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2021/03/29/45ae54f987c736e02c9888076dfca72c.gif",
+        "timevalue": "-100",
+        "enable": true
+      },
+      {
+        "id": "21184",
+        "name": "荣耀王冠",
+        "price": "100",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2020/11/17/106808d77e396ccee430bea99228c6e9.gif",
+        "timevalue": "-100",
+        "enable": true
+      },
+      {
+        "id": "20002",
+        "name": "办卡",
+        "price": "6",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2018/11/27/4b70d333522cb04c53d47fcd5345172c.png",
+        "timevalue": "6",
+        "enable": true
+      },
+      {
+        "id": "21326",
+        "name": "音乐卡",
+        "price": "6",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2021/01/22/742453072415a8146a6b06fbb20af5b6.gif",
+        "timevalue": "6",
+        "enable": true
+      },
+      {
+        "id": "20003",
+        "name": "飞机",
+        "price": "100",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2018/11/27/d9d906086d53ce938c09f697f9d581ae.png",
+        "timevalue": "-100",
+        "enable": true
+      },
+      {
+        "id": "20004",
+        "name": "火箭",
+        "price": "500",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2018/11/27/0499934258f03d7739623c9e05d72439.png",
+        "timevalue": "550",
+        "enable": true
+      },
+      {
+        "id": "20639",
+        "name": "火箭",
+        "price": "500",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2019/01/12/a8c638e3707ea613334fde813e916165.gif",
+        "timevalue": "550",
+        "enable": true
+      },
+      {
+        "id": "21474",
+        "name": "春风火箭",
+        "price": "500",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2021/03/29/59ba6ffced6b76be5dd181b4c55c9832.gif",
+        "timevalue": "550",
+        "enable": true
+      },
+      {
+        "id": "20843",
+        "name": "雷霆火箭",
+        "price": "500",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2020/04/21/10976000985db917aa068866f3a799d3.gif",
+        "timevalue": "550",
+        "enable": true
+      },
+      {
+        "id": "21186",
+        "name": "冰雪魔杖",
+        "price": "500",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2020/11/17/93013c265ecfbab4175d49ffe82272ba.gif",
+        "timevalue": "550",
+        "enable": true
+      },
+      {
+        "id": "20617",
+        "name": "春之旅行",
+        "price": "2000",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2020/03/09/93c425f8cfd870e54262980cf467bf82.gif",
+        "timevalue": "-2000",
+        "enable": false
+      },
+      {
+        "id": "21472",
+        "name": "春之旅行",
+        "price": "2000",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2021/03/29/0ff39dbfa1aa36f9d035cdd7893fe1c6.gif",
+        "timevalue": "-2000",
+        "enable": false
+      },
+      {
+        "id": "20844",
+        "name": "雷霆超火",
+        "price": "2000",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2020/04/21/580d2c3fbd1ccdb5f50bb98fa0bdf628.gif",
+        "timevalue": "-2000",
+        "enable": false
+      },
+      {
+        "id": "21188",
+        "name": "王者之剑",
+        "price": "2000",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2020/11/17/f8631c74c59c8ae9c7a1209786dae81a.gif",
+        "timevalue": "-2000",
+        "enable": false
+      },
+      {
+        "id": "20881",
+        "name": "告白卡",
+        "price": "6",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2020/05/15/4efc44533016149b1b667bdadfd8dcf7.gif",
+        "timevalue": "6",
+        "enable": true
+      },
+      {
+        "id": "20886",
+        "name": "告白卡",
+        "price": "6",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2020/05/15/d70467345cd0319977dae27436a3d6ab.png",
+        "timevalue": "6",
+        "enable": true
+      },
+      {
+        "id": "21339",
+        "name": "告白卡",
+        "price": "6",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2021/02/03/2f7b8382738b1de0ab1330e0bef78b18.gif",
+        "timevalue": "6",
+        "enable": true
+      },
+      {
+        "id": "20882",
+        "name": "告白飞机",
+        "price": "100",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2020/05/15/a1ce62e38d1c9c5f8c5eb13875212a9a.gif",
+        "timevalue": "-100",
+        "enable": true
+      },
+      {
+        "id": "20887",
+        "name": "告白飞机",
+        "price": "100",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2020/05/15/56eba20015b350610cd4da7b4480441e.png",
+        "timevalue": "-100",
+        "enable": true
+      },
+      {
+        "id": "1621",
+        "name": "告白火箭",
+        "price": "500",
+        "url": "https://staticlive.douyucdn.cn/storage/webpic_resources/upload/dygift/1805/00ac2ab1018deb4d6cbac217702cd183.png",
+        "timevalue": "550",
+        "enable": true
+      },
+      {
+        "id": "20883",
+        "name": "告白火箭",
+        "price": "500",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2020/05/15/6a6f02120ede0c54b95c9c5cbe3335f4.gif",
+        "timevalue": "550",
+        "enable": true
+      },
+      {
+        "id": "20888",
+        "name": "告白火箭",
+        "price": "500",
+        "url": "https://gfs-op.douyucdn.cn/dygift/2020/05/15/df348545e7d552e71f3b6e80104b1469.png",
+        "timevalue": "550",
+        "enable": true
+      }
+    ],
+    "user": [],
+    "command": [
+      {
+        "id": "1",
+        "command": "#注册",
+        "des": "目前并没有实际功能，只是演示使用"
+      }
+    ],
+    "config": {
+      "roomconfig": {
+        "enable": true,
+        "defaultroomid": "5186248",
+        "dmautorecnn": true,
+        "cnnstep": "1"
+      },
+      "timerconfig": {
+        "enable": true,
+        "starttime": "100",
+        "followaddtime": "1",
+        "timerformat": 2
+      }
+    },
+    "danmu": {
+      "roomid": "5186248",
+      "iscnn": false
+    },
+    "defaultconfig": {
+      "roomconfig": {
+        "enable": true,
+        "defaultroomid": "5186248",
+        "dmautorecnn": true,
+        "cnnstep": "1"
+      },
+      "timerconfig": {
+        "enable": true,
+        "starttime": "10",
+        "followaddtime": "1",
+        "timerformat": 2
+      }
+    },
+    "timer": 6000,
+    "timergap": 0,
+    "follows": null,
+    "version": "0.1.0"
+  }

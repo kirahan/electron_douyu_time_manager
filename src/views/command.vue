@@ -5,7 +5,7 @@
         <v-col cols="12">
           <v-sheet elevation-10 class="rounded-lg pa-3 pannel h100">
             <div class="text-md-h6 d-inline-block mr-3">
-              房间指令设置
+              房间指令设置【该页面支持直播间弹幕指令如签到，点歌等功能，如需使用请联系开发者-wx：zhaohan6570】
             </div>
             <v-btn v-if="false" color="#70CCA2" dark elevation="2" @click="addcommand"
               >新增</v-btn

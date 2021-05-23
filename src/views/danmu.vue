@@ -8,8 +8,9 @@
               <div>
                  <v-text-field
                   dark
+                  disabled
                   v-model="roomid"
-                  label="斗鱼房间号"
+                  label="斗鱼房间号-主播定制版不支持修改房间号"
                   class="roominput"
                 ></v-text-field>
                 <v-btn :color="formconfig.danmu.cnncolor" dark elevation="2" @click="cnndanmu"
@@ -28,8 +29,8 @@
 
               <v-col cols="12" class="eventlog rounded-lg">
                 <div class="douyutimer">{{douyutimer}}</div>
-                <div >斗鱼粉丝数据真实：0123456789</div>
-                <div :style="douyufontstyle">斗鱼粉丝数据虚假：0123456789</div>
+                <!-- <div >斗鱼粉丝数据真实：0123456789</div> -->
+                <!-- <div :style="douyufontstyle">斗鱼粉丝数据虚假：0123456789</div> -->
                 <div v-for="event in eventlist" :key="event.message+Math.random()">
                   <span class="pr-3" style="color:grey">{{event.timestamp}}</span>
                   <span class="pr-3" style="color:red">[{{event.type}}]</span>
